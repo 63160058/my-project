@@ -1,36 +1,39 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# ดูเพิ่มเติมได้ที่ https://help.github.com/articles/ignoring-files/ เกี่ยวกับการ ignore ไฟล์
 
-# dependencies
-/node_modules
-/.pnp
+# Dependencies
+node_modules/
+.pnp/
 .pnp.js
 .yarn/install-state.gz
-.docker-compose-mysql.yml
-# testing
-/coverage
 
-# next.js
-/.next/
-/out/
+# Docker compose files (เฉพาะการตั้งค่า MySQL)
+docker-compose-mysql.yml
 
-# production
-/build
+# Testing (coverage report)
+coverage/
 
-# misc
-.DS_Store
-*.pem
+# Next.js build output
+.next/
+out/
 
-# debug
+# Production build output
+build/
+
+# Miscellaneous system and editor files
+.DS_Store  # MacOS file
+*.pem      # certificate files
+
+# Debug log files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
+# Local environment files (เช่น .env.local, .env.production.local)
 .env*.local
 
-# vercel
-.vercel
+# Vercel deployment configuration
+.vercel/
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# TypeScript
+*.tsbuildinfo  # TS build information file
+next-env.d.ts  # auto-generated file for Next.js with TypeScript
