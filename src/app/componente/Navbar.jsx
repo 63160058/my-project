@@ -109,7 +109,7 @@ function Navbar() {
                         </div>
 
                         <Link href="/announcements" className='hover:text-[#FFD700] transition-colors duration-300'>ติดประกาศ</Link>
-                        <Link href="/logout" className='hover:text-[#FFD700] transition-colors duration-300'>ออกจากระบบ</Link>
+                        <Link href="/login" className='hover:text-[#FFD700] transition-colors duration-300'>เข้าสู่ระบบ</Link>
                     </div>
 
                     {/* Info section */}
