@@ -52,3 +52,13 @@ model postnotice{
   P_endorser String
   P_comment  String
 }
+
+model export_doc{
+  doc_id          String   @id @default(cuid())
+  num_doc Int
+  doc_date_at DateTime
+  doc_from  String
+  doc_end   String
+  doc_title String
+  doc_main String
+}
