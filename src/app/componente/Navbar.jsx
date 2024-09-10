@@ -109,13 +109,17 @@ function Navbar() {
                         </div>
 
                         <Link href="/announcements" className='hover:text-[#FFD700] transition-colors duration-300'>ติดประกาศ</Link>
-                        <Link href="/login" className='hover:text-[#FFD700] transition-colors duration-300'>เข้าสู่ระบบ</Link>
+                        {/* <Link href="/login" className='hover:text-[#FFD700] transition-colors duration-300'>เข้าสู่ระบบ</Link> */}
                     </div>
 
                     {/* Info section */}
                     <div className='text-sm'>
-                        ข้อมูลแสดงถึงสำนักงานเทศบาลเมืองบ้านโป่ง
+                       
                     </div>
+                    <ul className='flex'>
+                        <li className='mx-3'><Link href="/login">เข้าสู่ระบบ</Link></li>
+                    </ul>
+
                 </div>
             </div>
         </nav>
