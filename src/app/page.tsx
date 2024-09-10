@@ -5,6 +5,9 @@ import Navbar from "./componente/Navbar";
 
 
 export default function Home() {
+
+  
+  
   return (
     <main>
      < Navbar/>

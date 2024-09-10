@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'; // ใช้ useRouter จาก next/navigation
+import { signOut } from 'next-auth/react';
 
 function Navbar() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(null);
@@ -117,7 +118,8 @@ function Navbar() {
                        
                     </div>
                     <ul className='flex'>
-                        <li className='mx-3'><Link href="/login">เข้าสู่ระบบ</Link></li>
+                        <li className='mx-3'><Link href="/login" className='bg-green-500 text-white border py-2 px-3 rounded-md text-ls my-2'>เข้าสู่ระบบ</Link></li>
+                        <li className='mx-3'><a onClick={()=>signOut()} className='bg-red-500 text-white border py-2 px-3 rounded-md text-ls my-2'>ออกจากระบบ</a></li>
                     </ul>
 
                 </div>
