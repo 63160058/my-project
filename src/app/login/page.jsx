@@ -1,48 +1,81 @@
 "use client";
-import React, { useState } from 'react'
-import Navbar from "../componente/Navbar";
-import Link from 'next/link';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-function login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const router = useRouter();
+function Login() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const router = useRouter();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    try {
-      await fetch('http://localhost:3000/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-      });
-      router.push('/');
-    } catch (error) {
-      console.error(error);
-    }
+        try {
+            await fetch('http://localhost:3000/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+            router.push('/');
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
-    
+    return (
+        <div 
+            className="min-h-screen flex justify-center items-center bg-cover bg-center" 
+            style={{ backgroundImage: "url('https://banpong.go.th/public/slideone_upload/backend/slideone_3_1.jpg')" }} // ใส่ path ของรูปพื้นหลังที่ต้องการ
+        >
+            <div className="bg-white/80 p-8 rounded-md shadow-md w-96">
+                {/* Header with image */}
+                <div className="mb-5 text-center">
+                    <img src="https://banpong.go.th/public/configuration_upload/config/logoweb.png" alt="Banpong Municipality" style={{ width: '150px', height: '150px' }}  className="mx-auto mb-5" />
+                    <h2 className="text-center text-2xl font-bold text-blue-800">เข้าสู่ระบบ</h2>
+                </div>
+
+                {/* Form */}
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-4">
+                        <label htmlFor="email" className="block text-left mb-2 font-semibold text-blue-800">
+                            E-mail :
+                        </label>
+                        <input
+                            id="email"
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full p-2 rounded-md bg-gray-200 border border-gray-300"
+                            type="email"
+                            placeholder="Enter your email"
+                            required
+                        />
+                    </div>
+
+                    <div className="mb-6">
+                        <label htmlFor="password" className="block text-left mb-2 font-semibold text-blue-800">
+                            รหัสผ่าน :
+                        </label>
+                        <input
+                            id="password"
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full p-2 rounded-md bg-gray-200 border border-gray-300"
+                            type="password"
+                            placeholder="Enter your password"
+                            required
+                        />
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-all"
+                    >
+                        login
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
 }
-  return (
-    <div>
-      <Navbar />
-      <div className='container mx-auto py-5'>
-        <h3>Login page</h3>
-        <hr className='my-3' />
-        <form onSubmit={handleSubmit}>
-          <input onChange={(e) => setEmail(e.target.value)} className='block bg-gray-100 p-2 my-2 rounded-md' type='email' placeholder='Enter your email'></input> 
-          <input onChange={(e) => setPassword(e.target.value)} className='block bg-gray-100 p-2 my-2 rounded-md' type='password' placeholder='Enter your password'></input> 
-          <button type='submit' className='bg-green-500 p-2 rounded-md text-white'>Sign in</button>
-        </form>
-        <hr className='my-3' />
- 
-      </div>
-    </div>
-  )
-}
 
-export default login
+export default Login;
