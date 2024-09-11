@@ -8,7 +8,7 @@ export default function Home() {
     <main>
       <Navbar />
       {/* <Button>Click me</Button> */}
-      <h1 style={{ padding: "20px" }}>ชื่อวิจัย การพัฒนาระบบการจัดเก็บข้อมูลหนังสือราชการ</h1>
+      <h1 style={{ padding: "20px" }}>หนังสือส่งราชกาล (ภายนอก)</h1>
       <SearchableTable />
     </main>
   );
