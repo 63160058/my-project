@@ -34,7 +34,7 @@ function Navbar() {
     // UseEffect to detect clicks outside the dropdown
     useEffect(() => {
         if (status === 'unauthenticated') {
-            router.push('/')
+            router.push('/login')
           }
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
