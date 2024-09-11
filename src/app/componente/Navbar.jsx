@@ -3,13 +3,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'; // ใช้ useRouter จาก next/navigation
-import { signOut } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react'
 
 function Navbar() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(null);
     const exportDropdownRef = useRef(null); // ใช้ ref แยกสำหรับแต่ละ dropdown
     const importDropdownRef = useRef(null);
     const router = useRouter(); // ใช้ useRouter สำหรับการเปลี่ยนเส้นทาง
+    const { data: session, status } = useSession()
 
     // Function to handle the dropdown toggle
     const handleDropdown = (menu) => {
@@ -32,11 +33,14 @@ function Navbar() {
 
     // UseEffect to detect clicks outside the dropdown
     useEffect(() => {
+        if (status === 'unauthenticated') {
+            router.push('/')
+          }
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, []);
+    }, [status, router]);
 
     // Function to handle navigation and close dropdown
     const handleNavigation = (event, path) => {
@@ -46,6 +50,8 @@ function Navbar() {
     };
 
     return (
+        status === 'authenticated' &&
+        session.user && (
         <nav className='bg-[#333] text-white py-5 shadow-lg'>
             <div className='container mx-auto'>
                 <div className='flex justify-between items-center'>
@@ -118,14 +124,18 @@ function Navbar() {
                        
                     </div>
                     <ul className='flex'>
-                        <li className='mx-3'><Link href="/login" className='bg-green-500 text-white border py-2 px-3 rounded-md text-ls my-2'>เข้าสู่ระบบ</Link></li>
-                        <li className='mx-3'><a onClick={()=>signOut()} className='bg-red-500 text-white border py-2 px-3 rounded-md text-ls my-2'>ออกจากระบบ</a></li>
+                        {/* <li className='mx-3'><Link href="/login" className='bg-green-500 text-white border py-2 px-3 rounded-md text-ls my-2'>เข้าสู่ระบบ</Link></li> */}
+                        <button>
+                        <li className='mx-3'><a onClick={()=>signOut({ callbackUrl: '/login' })} className='bg-red-500 text-white border py-2 px-3 rounded-md text-ls my-2'>ออกจากระบบ</a></li>
+                        </button>
                     </ul>
 
                 </div>
             </div>
         </nav>
+        )
     );
+
 }
 
 export default Navbar;

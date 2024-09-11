@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 function Login() {
@@ -11,18 +12,21 @@ function Login() {
         e.preventDefault();
 
         try {
-            await fetch('http://localhost:3000/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, password })
-            });
-            router.push('/');
-        } catch (error) {
-            console.error(error);
+            const result = await signIn('credentials', {
+              redirect: false,
+              email,
+              password,
+            })
+      
+            if (result.error) {
+              console.error(result.error)
+            } else {
+              router.push('/')
+            }
+          } catch (error) {
+            console.log('error', error)
+          }
         }
-    };
 
     return (
         <div 
@@ -47,6 +51,7 @@ function Login() {
                             onChange={(e) => setEmail(e.target.value)}
                             className="w-full p-2 rounded-md bg-gray-200 border border-gray-300"
                             type="email"
+                            value={email}
                             placeholder="Enter your email"
                             required
                         />
@@ -61,6 +66,7 @@ function Login() {
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full p-2 rounded-md bg-gray-200 border border-gray-300"
                             type="password"
+                            value={password}
                             placeholder="Enter your password"
                             required
                         />

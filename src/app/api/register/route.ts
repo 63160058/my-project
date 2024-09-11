@@ -28,6 +28,7 @@ export async function POST(req: Request) {
           data: {
               User_email: User_email,
               password: hashedPassword,
+              User_id: Math.floor(Math.random() * 1000),
               User_fname: User_fname,
               User_lname: User_lname,
               role: 'user',
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
           },
       });
 
-      return NextResponse.json(user, { status: 201 });
+      return NextResponse.json({message: 'User created', user});
   } catch (error) {
       return NextResponse.json({ message: "Error occurred" }, { status: 500 });
   }

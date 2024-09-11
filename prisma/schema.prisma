@@ -14,7 +14,8 @@ datasource db {
 }
 
 model User {
-  User_id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
+  User_id        Int     @unique
   User_email     String   @unique
   User_fname      String?
   User_lname      String?
@@ -25,7 +26,8 @@ model User {
 }
 
 model officialdocument {
-  D_id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
+  D_id        String   @unique
   D_date      DateTime
   D_from      String
   D_story     String
@@ -33,7 +35,8 @@ model officialdocument {
 }
 
 model officialletter {
-  L_id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
+  L_id        String  @unique
   L_date      DateTime
   L_from      String
   L_story     String
@@ -41,7 +44,7 @@ model officialletter {
 }
 
 model postnotice{
-  P_number         String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
   P_institute Int
   P_id        String
   P_date1     DateTime

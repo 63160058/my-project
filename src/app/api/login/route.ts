@@ -16,13 +16,13 @@ export async function POST(req: Request) {
       });
   
       if (!user) {
-        return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 });
+        return NextResponse.json({ message: 'Invalid email or password2' }, { status: 401 });
       }
   
       const isValidPassword = await bcrypt.compare(password, user.password);
   
       if (!isValidPassword) {
-        return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 });
+        return NextResponse.json({ message: 'Invalid email or password2' }, { status: 401 });
       }
   
       return NextResponse.json(user, { status: 201 });
