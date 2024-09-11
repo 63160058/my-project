@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,6 +8,7 @@ datasource db {
 }
 
 model User {
+<<<<<<< Updated upstream
   id        Int      @id @default(autoincrement())
   User_id        Int     @unique
   User_email     String   @unique
@@ -45,23 +40,53 @@ model officialletter {
 
 model postnotice{
   id        Int      @id @default(autoincrement())
+=======
+  User_id    String   @id @default(cuid())
+  User_email String   @unique
+  User_fname String?
+  User_lname String?
+  role       String
+  password   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model officialdocument {
+  D_id    String   @id @default(cuid())
+  D_date  DateTime
+  D_from  String
+  D_story String
+  D_time  String
+}
+
+model officialletter {
+  L_id    String   @id @default(cuid())
+  L_date  DateTime
+  L_from  String
+  L_story String
+  L_time  String
+}
+
+model postnotice {
+  P_number    String   @id @default(cuid())
+>>>>>>> Stashed changes
   P_institute Int
   P_id        String
   P_date1     DateTime
-  P_story   String
-  P_website  String
-  P_date2   DateTime
-  P_time    String
-  P_endorser String
-  P_comment  String
+  P_story     String
+  P_website   String
+  P_date2     DateTime
+  P_time      String
+  P_endorser  String
+  P_comment   String
 }
 
-model export_doc{
-  doc_id          String   @id @default(cuid())
-  num_doc Int
+model export_doc {
+  doc_id      Int      @id @default(autoincrement())
+  num_doc     Int
   doc_date_at DateTime
-  doc_from  String
-  doc_end   String
-  doc_title String
-  doc_main String
+  doc_from    String
+  doc_end     String
+  doc_title   String
+  doc_main    String
 }
