@@ -1,16 +1,18 @@
-"use client"; // บอก Next.js ว่าเป็น Client Component
+"use client";
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // ใช้ useRouter จาก next/navigation
-import { useSession, signOut, getSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react'
 
 function Navbar() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(null);
-    const exportDropdownRef = useRef(null); // ใช้ ref แยกสำหรับแต่ละ dropdown
+    const exportDropdownRef = useRef(null);
     const importDropdownRef = useRef(null);
-    const router = useRouter(); // ใช้ useRouter สำหรับการเปลี่ยนเส้นทาง
-    const { data: session, status } = useSession();
+    const router = useRouter();
+    const { data: session, status } = useSession({
+ 
+    });
 
     // Function to handle the dropdown toggle
     const handleDropdown = (menu) => {
@@ -39,25 +41,14 @@ function Navbar() {
         };
     }, []);
 
-    // ตรวจสอบ session โดยใช้ getSession ก่อนที่จะทำการ redirect
-    useEffect(() => {
-        if (!session) {
-            router.push('/login');
-          }
-        }, [status, router]);
-
     // Function to handle navigation and close dropdown
     const handleNavigation = (event, path) => {
-        event.preventDefault(); // ป้องกันการกระทำเริ่มต้นของปุ่ม
+        event.preventDefault();
         router.push(path); // เปลี่ยนเส้นทางไปที่ path ที่ระบุ
         setIsDropdownOpen(null); // ปิด dropdown หลังจาก navigation
     };
 
-
     return (
-        
-        status === 'authenticated' &&
-        session?.user && (
         <nav className='bg-[#333] text-white py-5 shadow-lg'>
             <div className='container mx-auto'>
                 <div className='flex justify-between items-center'>
@@ -128,23 +119,48 @@ function Navbar() {
                     <div className='text-sm'>
                         {/* Add user info here if needed */}
                     </div>
+                    
                     <ul className='flex'>
-                        <button>
+                        {status === 'loading' ? (
                             <li className='mx-3'>
-                                <a
-                                    onClick={() => signOut({ callbackUrl: '/login' })}
-                                    className='bg-red-500 text-white border py-2 px-3 rounded-md text-ls my-2'
-                                >
-                                    ออกจากระบบ
-                                </a>
+                                <span className='bg-gray-500 text-white border py-2 px-3 rounded-md text-ls my-2'>
+                                    กำลังโหลด...
+                                </span>
                             </li>
-                        </button>
+                        ) : status === 'authenticated' ? (
+                            <>
+                                <li className='mx-3'>
+                                    <span>สวัสดี, {session.user.name}</span>
+                                </li>
+                                
+                                <li className='mx-3'>
+                                <button>
+                                    <a
+                                        onClick={() => signOut({ callbackUrl: '/login' })}
+                                        className='bg-red-500 text-white border py-2 px-3 rounded-md text-ls my-2 cursor-pointer hover:bg-red-700'
+                                    >
+                                        ออกจากระบบ
+                                    </a>
+                                    </button>
+                                </li>
+                                
+                            </>
+                        ) : (
+                            <li className='mx-3'>
+                                <button>
+                                <a
+                                    onClick={() => router.push('/login')}
+                                    className='bg-green-500 text-white border py-2 px-3 rounded-md text-ls my-2 cursor-pointer hover:bg-red-700'
+                                >
+                                    เข้าสู่ระบบ
+                                </a>
+                                </button>
+                            </li>
+                        )}
                     </ul>
-
                 </div>
             </div>
         </nav>
-        )
     );
 }
 

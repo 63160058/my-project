@@ -71,12 +71,20 @@ function Login() {
                             required
                         />
                     </div>
-
+                
                     <button 
                         type="submit" 
                         className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-all"
                     >
-                        login
+                        เข้าสู่ระบบ
+                    </button>
+
+                    <hr className="my-2" />
+                    <button 
+                        onClick={() => router.back()}
+                        className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition-all"
+                    >
+                        ย้อนกลับ
                     </button>
                 </form>
             </div>
