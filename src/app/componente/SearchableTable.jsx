@@ -8,6 +8,10 @@ export default function SearchableTable() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10); // จำนวนข้อมูลต่อหน้า (เริ่มต้นเป็น 10)
+
   useEffect(() => {
     // Fetch data from the API
     const fetchData = async () => {
@@ -44,11 +48,27 @@ export default function SearchableTable() {
     );
   });
 
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  // ฟังก์ชันสำหรับเปลี่ยนหน้า
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // ฟังก์ชันสำหรับเปลี่ยนจำนวนข้อมูลที่แสดงต่อหน้า
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(1); // รีเซ็ตกลับไปที่หน้าที่ 1 เมื่อเปลี่ยนจำนวนข้อมูลต่อหน้า
+  };
+
   return (
     <div style={{ padding: "20px" }}>
       <div>
         {/* ช่องค้นหา */}
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "5px" }}>
           <input
             type="text"
             placeholder="ค้นหา..."
@@ -56,6 +76,9 @@ export default function SearchableTable() {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ padding: "8px", marginBottom: "10px", width: "40%", border: "1px solid #ddd", borderRadius: "4px" }}
           />
+          
+          {/* Dropdown สำหรับเปลี่ยนจำนวนข้อมูลที่แสดงต่อหน้า */}
+
         </div>
 
         {/* ตารางข้อมูล */}
@@ -72,7 +95,7 @@ export default function SearchableTable() {
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((row) => (
+            {currentItems.map((row) => (
               <tr key={row.doc_id}>
                 <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_id}</td>
                 <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.num_doc}</td>
@@ -85,6 +108,49 @@ export default function SearchableTable() {
             ))}
           </tbody>
         </table>
+
+        {/* Pagination controls */}
+        <div style={{ marginTop: "10px", display: "flex", justifyContent: "flex-end" }}> {/* flex-end เพื่อให้ปุ่มไปอยู่ด้านขวา */}
+          <button
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+            style={{ padding: "8px", margin: "0 5px", cursor: "pointer" }}
+          >
+            Previous
+          </button>
+
+          {[...Array(totalPages)].map((_, i) => (
+            <button
+              key={i}
+              onClick={() => paginate(i + 1)}
+              style={{
+                padding: "8px",
+                margin: "0 5px",
+                cursor: "pointer",
+                backgroundColor: currentPage === i + 1 ? "#ddd" : "transparent",
+                border: "1px solid #ddd"
+              }}
+            >
+              {i + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            style={{ padding: "8px", margin: "0 5px", cursor: "pointer" }}
+          >
+            Next
+          </button>
+          <select value={itemsPerPage} onChange={handleItemsPerPageChange} style={{ padding: "8px", border: "1px solid #ddd", borderRadius: "4px" }}>
+            <option value={5}>5</option>
+            <option value={10}>10 </option>
+            <option value={50}>50 </option>
+            <option value={100}>100 </option>
+          </select>
+        </div>
+        {/* <p style={{ marginLeft: "10px" }}>Page {currentPage} of {totalPages}</p>
+         */}
       </div>
     </div>
   );
