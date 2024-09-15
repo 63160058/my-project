@@ -8,7 +8,6 @@ datasource db {
 }
 
 model User {
-<<<<<<< Updated upstream
   id        Int      @id @default(autoincrement())
   User_id        Int     @unique
   User_email     String   @unique
@@ -40,36 +39,6 @@ model officialletter {
 
 model postnotice{
   id        Int      @id @default(autoincrement())
-=======
-  User_id    String   @id @default(cuid())
-  User_email String   @unique
-  User_fname String?
-  User_lname String?
-  role       String
-  password   String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-}
-
-model officialdocument {
-  D_id    String   @id @default(cuid())
-  D_date  DateTime
-  D_from  String
-  D_story String
-  D_time  String
-}
-
-model officialletter {
-  L_id    String   @id @default(cuid())
-  L_date  DateTime
-  L_from  String
-  L_story String
-  L_time  String
-}
-
-model postnotice {
-  P_number    String   @id @default(cuid())
->>>>>>> Stashed changes
   P_institute Int
   P_id        String
   P_date1     DateTime
