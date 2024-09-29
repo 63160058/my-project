@@ -150,7 +150,7 @@ function Navbar() {
                                 <button>
                                 <a
                                     onClick={() => router.push('/login')}
-                                    className='bg-green-500 text-white border py-2 px-3 rounded-md text-ls my-2 cursor-pointer hover:bg-red-700'
+                                    className='bg-green-500 text-white border py-2 px-3 rounded-md text-ls my-2 cursor-pointer hover:bg-green-700'
                                 >
                                     เข้าสู่ระบบ
                                 </a>
