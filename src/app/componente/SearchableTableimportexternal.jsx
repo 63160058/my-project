@@ -15,7 +15,7 @@ export default function SearchableTable() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch("/api/export/internal");
+                const response = await fetch("/api/import/external");
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
@@ -35,13 +35,13 @@ export default function SearchableTable() {
     if (error) return <p>Error: {error}</p>;
 
     const filteredData = data.filter((row) =>
-        row.D_id.toString().includes(searchTerm) ||
-        row.D_date.toString().includes(searchTerm) ||
-        row.D_from.includes(searchTerm) ||
-        row.D_story.includes(searchTerm) ||
-        row.D_time.includes(searchTerm) ||
-        row.D_to.includes(searchTerm) ||
-        row.D_num.includes(searchTerm)
+        row.L_id.toString().includes(searchTerm) ||
+        row.L_date.toString().includes(searchTerm) ||
+        row.L_from.includes(searchTerm) ||
+        row.L_story.includes(searchTerm) ||
+        row.L_time.includes(searchTerm) ||
+        row.L_to.includes(searchTerm) ||
+        row.L_num.includes(searchTerm)
     );
 
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -90,15 +90,15 @@ export default function SearchableTable() {
                                     <td style={{ padding: "8px", border: "1px solid #ddd" }}>
                                         {indexOfFirstItem + index + 1} {/* ลำดับแถว */}
                                     </td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_id}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.L_id}</td>
                                     <td style={{ padding: "8px", border: "1px solid #ddd" }}>
                                         {new Date(row.D_date).toLocaleDateString()}
                                     </td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_from}</td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_to}</td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_story}</td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_comment}</td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_time}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.L_from}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.L_to}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.L_story}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.L_comment}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.L_time}</td>
                                 </tr>
                             ))}
                     </tbody>

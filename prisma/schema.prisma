@@ -28,7 +28,7 @@ model officialdocument {
   D_time      String
   D_type      String
   D_to        String
-  D_num       String
+  D_comment   String
 }
 
 model officialletter {
@@ -40,7 +40,7 @@ model officialletter {
   L_time      String
   L_type      String 
   L_to        String
-  L_num       String
+  L_comment   String
 }
 
 model postnotice{
