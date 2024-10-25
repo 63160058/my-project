@@ -92,6 +92,7 @@ export default function SearchableTable() {
               <th style={{ padding: "8px", border: "1px solid #ddd" }}>ถึง</th>
               <th style={{ padding: "8px", border: "1px solid #ddd" }}>เรื่อง</th>
               <th style={{ padding: "8px", border: "1px solid #ddd" }}>การปฏิบัติ</th>
+              <th style={{ padding: "8px", border: "1px solid #ddd" }}>หมายเหตุ</th>
             </tr>
           </thead>
           <tbody>
@@ -104,6 +105,7 @@ export default function SearchableTable() {
                 <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_end}</td>
                 <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_title}</td>
                 <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_main}</td>
+                <td></td>
               </tr>
             ))}
           </tbody>

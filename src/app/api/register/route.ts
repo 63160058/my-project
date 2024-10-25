@@ -38,7 +38,8 @@ export async function POST(req: Request) {
 
       return NextResponse.json({message: 'User created', user});
   } catch (error) {
-      return NextResponse.json({ message: "Error occurred" }, { status: 500 });
-  }
+    console.error("Error details:", error);
+    return NextResponse.json({ message: "Error occurred" }, { status: 500 });
+    }
 }
     
