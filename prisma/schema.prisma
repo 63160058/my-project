@@ -8,15 +8,15 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  User_id        Int     @unique
-  User_email     String   @unique
-  User_fname      String?
-  User_lname      String?
-  role           String
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  User_id    Int      @unique
+  User_email String   @unique
+  User_fname String?
+  User_lname String?
+  role       String
+  password   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
 }
 
 model officialdocument {
@@ -41,10 +41,10 @@ model officialletter {
   L_type      String 
   L_to        String
   L_comment   String
+
 }
 
-model postnotice{
-  id        Int      @id @default(autoincrement())
+model postnotice {
   P_institute Int
   P_id        String
   P_date1     DateTime
@@ -54,10 +54,11 @@ model postnotice{
   P_time      String
   P_endorser  String
   P_comment   String
+  id          Int      @id @default(autoincrement())
 }
 
 model export_doc {
-  doc_id      Int      @id @default(autoincrement())
+  doc_id      String   @id
   num_doc     Int
   doc_date_at DateTime
   doc_from    String

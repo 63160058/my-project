@@ -96,25 +96,25 @@ export default function SearchableTable() {
             </tr>
           </thead>
           <tbody>
-            {currentItems
-              .filter((row) => row.D_type === "external") // กรองเฉพาะแถวที่เป็น external
-              .map((row, index) => (
-                <tr key={row.D_id}>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    {indexOfFirstItem + index + 1} {/* ลำดับแถว */}
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_id}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    {new Date(row.D_date).toLocaleDateString()}
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_from}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_to}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_story}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_comment}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_time}</td>
-                </tr>
-              ))}
-          </tbody>
+                        {currentItems
+                            .filter((row) => row.D_type === "external") // กรองเฉพาะแถวที่เป็น external
+                            .map((row, index) => (
+                                <tr key={row.D_id}>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                                        {indexOfFirstItem + index + 1} {/* ลำดับแถว */}
+                                    </td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_id}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                                        {new Date(row.D_date).toLocaleDateString()}
+                                    </td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_from}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_to}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_story}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_comment}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_time}</td>
+                                </tr>
+                            ))}
+                    </tbody>
         </table>
 
         {/* Pagination controls */}
