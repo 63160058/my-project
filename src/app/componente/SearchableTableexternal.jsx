@@ -38,13 +38,13 @@ export default function SearchableTable() {
   // ฟังก์ชันสำหรับกรองข้อมูลตามคำค้นหา
   const filteredData = data.filter((row) => {
     return (
-      row.doc_id.toString().includes(searchTerm) ||
-      row.num_doc.toString().includes(searchTerm) ||
-      row.doc_date_at.includes(searchTerm) ||
-      row.doc_from.includes(searchTerm) ||
-      row.doc_end.includes(searchTerm) ||
-      row.doc_title.includes(searchTerm) ||
-      row.doc_main.includes(searchTerm)
+      row.D_id.toString().includes(searchTerm) ||
+      row.D_date.toString().includes(searchTerm) ||
+      row.D_from.includes(searchTerm) ||
+      row.D_story.includes(searchTerm) ||
+      row.D_time.includes(searchTerm) ||
+      row.D_to.includes(searchTerm) ||
+      row.D_num.includes(searchTerm)
     );
   });
 
@@ -95,17 +95,21 @@ export default function SearchableTable() {
             </tr>
           </thead>
           <tbody>
-            {currentItems.map((row) => (
-              <tr key={row.doc_id}>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_id}</td>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.num_doc}</td>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{new Date(row.doc_date_at).toLocaleDateString()}</td>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_from}</td>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_end}</td>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_title}</td>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_main}</td>
-              </tr>
-            ))}
+          {currentItems.map((row) =>
+    row.D_type === "external" ? (
+      <tr key={row.D_id}>
+        <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_id}</td>
+        <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_num}</td>
+        <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+          {new Date(row.D_date).toLocaleDateString()}
+        </td>
+        <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_from}</td>
+        <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_to}</td>
+        <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_story}</td>
+        <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_time}</td>
+      </tr>
+    ) : null
+  )}
           </tbody>
         </table>
 

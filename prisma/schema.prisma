@@ -26,6 +26,9 @@ model officialdocument {
   D_from      String
   D_story     String
   D_time      String
+  D_type      String
+  D_to        String
+  D_num       String
 }
 
 model officialletter {
@@ -34,7 +37,10 @@ model officialletter {
   L_date      DateTime
   L_from      String
   L_story     String
-  L_time      String  
+  L_time      String
+  L_type      String 
+  L_to        String
+  L_num       String
 }
 
 model postnotice{
