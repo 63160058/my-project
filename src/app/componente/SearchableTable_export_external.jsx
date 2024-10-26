@@ -38,15 +38,23 @@ export default function SearchableTable() {
   // ฟังก์ชันสำหรับกรองข้อมูลตามคำค้นหา
   const filteredData = data.filter((row) => {
     return (
-      row.doc_id.toString().includes(searchTerm) ||
-      row.num_doc.toString().includes(searchTerm) ||
-      row.doc_date_at.includes(searchTerm) ||
-      row.doc_from.includes(searchTerm) ||
-      row.doc_end.includes(searchTerm) ||
-      row.doc_title.includes(searchTerm) ||
-      row.doc_main.includes(searchTerm)
+      row.D_id.toString().includes(searchTerm) ||
+      // row.num_doc.toString().includes(searchTerm) ||
+      row.D_date.includes(searchTerm) ||
+      row.D_from.includes(searchTerm) ||
+      row.D_to.includes(searchTerm) ||
+      row.D_story.includes(searchTerm) ||
+      row.D_comment.includes(searchTerm)
     );
   });
+
+  const thaiTimes = data.map((row) => {
+    if (row.D_time) {
+      return new Date(row.D_time).toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' });
+    }
+    return ""; // คืนค่าว่างถ้าไม่มีเวลา
+  });
+
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -68,67 +76,61 @@ export default function SearchableTable() {
     <div style={{ padding: "20px" }}>
       <div>
         {/* ช่องค้นหา */}
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "5px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "5px" }}>
           <input
             type="text"
             placeholder="ค้นหา..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ padding: "8px", marginBottom: "10px", width: "40%", border: "1px solid #ddd", borderRadius: "4px" }}
+            style={{ padding: "8px", width: "40%", border: "1px solid #ddd", borderRadius: "4px" }}
           />
-          
-          {/* Dropdown สำหรับเปลี่ยนจำนวนข้อมูลที่แสดงต่อหน้า */}
-
+          <a
+            type="button"
+            href="/export/external/add"
+            style={{ backgroundColor: "#4CAF50", color: "white", padding: "8px 16px", border: "none", borderRadius: "4px", cursor: "pointer", marginLeft: "10px" }}
+          >
+            เพิ่มข้อมูล
+          </a>
         </div>
 
         {/* ตารางข้อมูล */}
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ backgroundColor: "#f4f4f4" }}>
-              <th style={{ padding: "8px", border: "1px solid #ddd" }}>เลขที่ทะเบียนรับ</th>
-              <th style={{ padding: "8px", border: "1px solid #ddd" }}>ที่</th>
-              <th style={{ padding: "8px", border: "1px solid #ddd" }}>ลงวันที่</th>
-              <th style={{ padding: "8px", border: "1px solid #ddd" }}>จาก</th>
-              <th style={{ padding: "8px", border: "1px solid #ddd" }}>ถึง</th>
-              <th style={{ padding: "8px", border: "1px solid #ddd" }}>เรื่อง</th>
-              <th style={{ padding: "8px", border: "1px solid #ddd" }}>การปฏิบัติ</th>
+              <th style={{ width: "5%", padding: "8px", border: "1px solid #ddd" }}>เลขที่ทะเบียนรับ</th>
+              <th style={{ width: "10%", padding: "8px", border: "1px solid #ddd" }}>ที่</th>
+              <th style={{ width: "5%", padding: "8px", border: "1px solid #ddd" }}>ลงวันที่</th>
+              <th style={{ width: "8%", padding: "8px", border: "1px solid #ddd" }}>จาก</th>
+              <th style={{ width: "8%", padding: "8px", border: "1px solid #ddd" }}>ถึง</th>
+              <th style={{ width: "44%", padding: "8px", border: "1px solid #ddd" }}>เรื่อง</th>
+              <th style={{ width: "10%", padding: "8px", border: "1px solid #ddd" }}>การปฏิบัติ</th>
+              <th style={{ width: "5%", padding: "8px", border: "1px solid #ddd" }}>หมายเหตุ</th>
             </tr>
           </thead>
           <tbody>
-<<<<<<< Updated upstream:src/app/componente/SearchableTableexternal.jsx
                         {currentItems
                             .filter((row) => row.D_type === "external") // กรองเฉพาะแถวที่เป็น external
                             .map((row, index) => (
                                 <tr key={row.D_id}>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
                                         {indexOfFirstItem + index + 1} {/* ลำดับแถว */}
                                     </td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_id}</td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_id}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
                                         {new Date(row.D_date).toLocaleDateString()}
                                     </td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_from}</td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_to}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_from}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_to}</td>
                                     <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_story}</td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_comment}</td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_time}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_comment}</td>
+                                    
+                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
+                                      {row.D_time ? new Date(row.D_time).toLocaleTimeString('th-TH', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit' }) : ""}
+                                    </td>
+
                                 </tr>
                             ))}
                     </tbody>
-=======
-            {currentItems.map((row) => (
-              <tr key={row.doc_id}>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_id}</td>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.num_doc}</td>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{new Date(row.doc_date_at).toLocaleDateString()}</td>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_from}</td>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_end}</td>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_title}</td>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_main}</td>
-              </tr>
-            ))}
-          </tbody>
->>>>>>> Stashed changes:src/app/componente/SearchableTable_export_external.jsx
         </table>
 
         {/* Pagination controls */}
