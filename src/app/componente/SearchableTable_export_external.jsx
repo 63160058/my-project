@@ -38,13 +38,13 @@ export default function SearchableTable() {
   // ฟังก์ชันสำหรับกรองข้อมูลตามคำค้นหา
   const filteredData = data.filter((row) => {
     return (
-      row.D_id.toString().includes(searchTerm) ||
-      row.D_date.toString().includes(searchTerm) ||
-      row.D_from.includes(searchTerm) ||
-      row.D_story.includes(searchTerm) ||
-      row.D_time.includes(searchTerm) ||
-      row.D_to.includes(searchTerm) ||
-      row.D_num.includes(searchTerm)
+      row.doc_id.toString().includes(searchTerm) ||
+      row.num_doc.toString().includes(searchTerm) ||
+      row.doc_date_at.includes(searchTerm) ||
+      row.doc_from.includes(searchTerm) ||
+      row.doc_end.includes(searchTerm) ||
+      row.doc_title.includes(searchTerm) ||
+      row.doc_main.includes(searchTerm)
     );
   });
 
@@ -76,7 +76,7 @@ export default function SearchableTable() {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ padding: "8px", marginBottom: "10px", width: "40%", border: "1px solid #ddd", borderRadius: "4px" }}
           />
-
+          
           {/* Dropdown สำหรับเปลี่ยนจำนวนข้อมูลที่แสดงต่อหน้า */}
 
         </div>
@@ -92,10 +92,10 @@ export default function SearchableTable() {
               <th style={{ padding: "8px", border: "1px solid #ddd" }}>ถึง</th>
               <th style={{ padding: "8px", border: "1px solid #ddd" }}>เรื่อง</th>
               <th style={{ padding: "8px", border: "1px solid #ddd" }}>การปฏิบัติ</th>
-              <th style={{ padding: "8px", border: "1px solid #ddd" }}>หมายเหตุ</th>
             </tr>
           </thead>
           <tbody>
+<<<<<<< Updated upstream:src/app/componente/SearchableTableexternal.jsx
                         {currentItems
                             .filter((row) => row.D_type === "external") // กรองเฉพาะแถวที่เป็น external
                             .map((row, index) => (
@@ -115,6 +115,20 @@ export default function SearchableTable() {
                                 </tr>
                             ))}
                     </tbody>
+=======
+            {currentItems.map((row) => (
+              <tr key={row.doc_id}>
+                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_id}</td>
+                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.num_doc}</td>
+                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{new Date(row.doc_date_at).toLocaleDateString()}</td>
+                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_from}</td>
+                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_end}</td>
+                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_title}</td>
+                <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.doc_main}</td>
+              </tr>
+            ))}
+          </tbody>
+>>>>>>> Stashed changes:src/app/componente/SearchableTable_export_external.jsx
         </table>
 
         {/* Pagination controls */}
