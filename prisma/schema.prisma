@@ -33,7 +33,6 @@ model officialdocument {
 
 model officialletter {
   id        Int      @id @default(autoincrement())
-<<<<<<< Updated upstream
   L_id        String  @unique
   L_date      DateTime
   L_from      String
@@ -43,17 +42,7 @@ model officialletter {
   L_to        String
   L_comment   String
 
-=======
-  L_id      String   @unique
-  L_date    DateTime
-  L_from    String
-  L_story   String
-  L_time    String
-  L_type    String 
-  L_to      String
-  L_num     String
-  L_comment String
->>>>>>> Stashed changes
+
 }
 
 model postnotice {
