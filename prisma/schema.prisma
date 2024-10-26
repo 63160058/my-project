@@ -33,15 +33,17 @@ model officialdocument {
 
 model officialletter {
   id        Int      @id @default(autoincrement())
-  L_id      String   @unique
-  L_date    DateTime
-  L_from    String
-  L_story   String
-  L_time    String
-  L_type    String 
-  L_to      String
-  L_num     String   // เพิ่มฟิลด์ L_num
-  L_comment String
+  L_id        String  @unique
+  L_date      DateTime
+  L_from      String
+  L_story     String
+  L_time      String
+  L_type      String 
+  L_to        String
+  L_comment   String
+
+
+
 }
 
 model postnotice {
