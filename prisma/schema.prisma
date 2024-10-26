@@ -25,7 +25,7 @@ model officialdocument {
   D_date    DateTime
   D_from    String
   D_story   String
-  D_time    String
+  D_time    DateTime
   D_type    String
   D_to      String
   D_comment String
@@ -41,6 +41,7 @@ model officialletter {
   L_type      String 
   L_to        String
   L_comment   String
+
 
 
 }
