@@ -1,7 +1,7 @@
 "use client";
 
 import Navbar from "../../componente/Navbar";
-import SearchableTable from "../../componente/SearchableTableimportinternal";
+import SearchableTable from "../../componente/SearchableTable_import_internal";
 import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation'; // ใช้ useRouter จาก next/navigation
 import React, { useState, useEffect } from 'react';
@@ -31,7 +31,7 @@ export default function Home() {
   return (
     <main>
       <Navbar />
-      <h1 style={{ padding: "20px" }}>หนังสือรับออกราชการ (ภายใน)</h1>
+      <h1 style={{ padding: "20px" }}>หนังสือนำเข้าราชการ (ภายใน)</h1>
       <SearchableTable />
     </main>
   );
