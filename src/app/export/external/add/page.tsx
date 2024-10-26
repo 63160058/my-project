@@ -150,7 +150,7 @@ export default function Home() {
         <div style={{ marginBottom: "10px" }}>
           <label>หมายเหตุ:</label>
           <input
-            type="datetime-local"
+            type="time"
             name="time"
             value={formData.time}
             onChange={handleChange}

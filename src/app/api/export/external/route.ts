@@ -20,18 +20,18 @@ export async function POST(req: Request) {
   try {
     const { id, date, from, to, story, comment, time } = await req.json();
 
-    // ตรวจสอบและแปลง D_date ให้อยู่ในรูปแบบ ISO-8601
-    const D_dateISO = new Date(date).toISOString(); // แปลงเป็น ISO-8601 DateTime
+    // Convert D_date to ISO-8601 format
+    const D_dateISO = new Date(date).toISOString(); // Convert to ISO-8601 DateTime
 
-    // ตรวจสอบและแปลง D_time ให้อยู่ในรูปแบบที่ถูกต้อง
+    // Prepare D_time
     let D_timeString;
 
-    // ตรวจสอบว่ามีการส่งเวลาเข้ามา
+    // Check if time is provided
     if (time) {
       const timeParts = time.split(':');
-      // ตรวจสอบความยาวของ timeParts เพื่อให้แน่ใจว่ามีชั่วโมงและนาที
+      // Ensure timeParts has hours and minutes
       if (timeParts.length >= 2) {
-        // สร้างค่า D_time โดยใช้วันที่คงที่
+        // Create D_time using a fixed date
         D_timeString = new Date(`1970-01-01T${time}:00Z`).toISOString();
       } else {
         throw new Error('Invalid time format');
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
         D_to: to,
         D_story: story,
         D_comment: comment,
-        D_time: D_timeString, // ใช้ค่า D_time ที่แปลงแล้ว
+        D_time: D_timeString, // Use the converted D_time
       },
     });
     return NextResponse.json(officialdocument);
