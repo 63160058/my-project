@@ -148,15 +148,20 @@ export default function Home() {
         </div>
 
         <div style={{ marginBottom: "10px" }}>
-          <label>หมายเหตุ:</label>
-          <input
-            type="datetime-local"
-            name="time"
-            value={formData.time}
-            onChange={handleChange}
-            style={{ width: "100%", padding: "8px", border: "1px solid #ddd", borderRadius: "4px" }}
-          />
-        </div>
+  <label>หมายเหตุ:</label>
+  <input
+    type="time"
+    name="time"
+    value={formData.time}
+    onChange={handleChange}
+    style={{
+      width: "100%",
+      padding: "8px",
+      border: "1px solid #ddd",
+      borderRadius: "4px",
+    }}
+  />
+</div>
 
         <button
           type="submit"
