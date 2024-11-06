@@ -90,7 +90,7 @@ function Navbar() {
                                 onClick={() => handleDropdown('import')}
                                 className='hover:text-[#FFD700] transition-colors duration-300'
                             >
-                                หนังสือรับราชการ
+                                หนังสือนำเข้าราชการ
                             </button>
                             {isDropdownOpen === 'import' && (
                                 <div className='absolute top-full left-0 bg-[#555] text-white p-4 shadow-md rounded-md transition-all duration-300'>
