@@ -148,6 +148,7 @@ export default function Home() {
         </div>
 
         <div style={{ marginBottom: "10px" }}>
+<<<<<<< HEAD
   <label>หมายเหตุ:</label>
   <input
     type="time"
@@ -162,6 +163,17 @@ export default function Home() {
     }}
   />
 </div>
+=======
+          <label>หมายเหตุ:</label>
+          <input
+            type="time"
+            name="time"
+            value={formData.time}
+            onChange={handleChange}
+            style={{ width: "100%", padding: "8px", border: "1px solid #ddd", borderRadius: "4px" }}
+          />
+        </div>
+>>>>>>> 31136681c73c7c442f96d14ecaa1f6265f2be9eb
 
         <button
           type="submit"
