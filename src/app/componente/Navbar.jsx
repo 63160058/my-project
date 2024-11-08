@@ -3,37 +3,47 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react'
+import Cookies from 'js-cookie';
 
 function Navbar() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(null);
     const exportDropdownRef = useRef(null);
     const importDropdownRef = useRef(null);
     const router = useRouter();
-    const { data: session, status } = useSession({
- 
-    });
 
-    // Function to handle the dropdown toggle
-    const handleDropdown = (menu) => {
-        if (isDropdownOpen === menu) {
-            setIsDropdownOpen(null); // ปิด dropdown ถ้ากดที่เดิม
-        } else {
-            setIsDropdownOpen(menu); // เปิด dropdown ที่เลือก
-        }
+    // เก็บค่า token และ username จากคุกกี้
+    const [token, setToken] = useState(null);
+    const [username, setUsername] = useState(null);
+
+    // โหลดค่า token และ username ใน useEffect ฝั่งไคลเอนต์
+    useEffect(() => {
+        setToken(Cookies.get('token'));
+        setUsername(Cookies.get('userName'));
+    }, []);
+
+    // ฟังก์ชันจัดการการล็อกเอาต์
+    const handleLogout = () => {
+        Cookies.remove('token');
+        Cookies.remove('email');
+        Cookies.remove('userName');
+        Cookies.remove('role');
+        router.push('/');
+        window.location.reload();
     };
 
-    // Function to handle clicks outside the dropdown
+    const handleDropdown = (menu) => {
+        setIsDropdownOpen(isDropdownOpen === menu ? null : menu);
+    };
+
     const handleClickOutside = (event) => {
         if (
             (exportDropdownRef.current && !exportDropdownRef.current.contains(event.target)) &&
             (importDropdownRef.current && !importDropdownRef.current.contains(event.target))
         ) {
-            setIsDropdownOpen(null); // ปิด dropdown เมื่อคลิกนอก dropdown
+            setIsDropdownOpen(null);
         }
     };
 
-    // UseEffect to detect clicks outside the dropdown
     useEffect(() => {
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
@@ -41,11 +51,10 @@ function Navbar() {
         };
     }, []);
 
-    // Function to handle navigation and close dropdown
     const handleNavigation = (event, path) => {
         event.preventDefault();
-        router.push(path); // เปลี่ยนเส้นทางไปที่ path ที่ระบุ
-        setIsDropdownOpen(null); // ปิด dropdown หลังจาก navigation
+        router.push(path);
+        setIsDropdownOpen(null);
     };
 
     return (
@@ -55,8 +64,6 @@ function Navbar() {
                     {/* Main Links */}
                     <div className='flex space-x-8'>
                         <Link href="/" className='hover:text-[#FFD700] transition-colors duration-300'>หน้าหลัก</Link>
-
-                        {/* Dropdown 1: หนังสือส่งออกราชการ */}
                         <div className='relative' ref={exportDropdownRef}>
                             <button
                                 onClick={() => handleDropdown('export')}
@@ -115,46 +122,28 @@ function Navbar() {
                         <Link href="/announcements" className='hover:text-[#FFD700] transition-colors duration-300'>ติดประกาศ</Link>
                     </div>
 
-                    {/* Info section */}
-                    <div className='text-sm'>
-                        {/* Add user info here if needed */}
-                    </div>
-                    
                     <ul className='flex'>
-                        {status === 'loading' ? (
-                            <li className='mx-3'>
-                                <span className='bg-gray-500 text-white border py-2 px-3 rounded-md text-ls my-2'>
-                                    กำลังโหลด...
-                                </span>
-                            </li>
-                        ) : status === 'authenticated' ? (
+                        {token ? (
                             <>
-                                <li className='mx-3'>
-                                    <span>สวัสดี, {session.user.name}</span>
+                                <li className='mx-3 flex items-center'>
+                                    <span>สวัสดี, {username}</span>
                                 </li>
-                                
                                 <li className='mx-3'>
-                                <button>
-                                    <a
-                                        onClick={() => signOut({ callbackUrl: '/login' })}
+                                    <button
+                                        onClick={handleLogout}
                                         className='bg-red-500 text-white border py-2 px-3 rounded-md text-ls my-2 cursor-pointer hover:bg-red-700'
                                     >
                                         ออกจากระบบ
-                                    </a>
                                     </button>
                                 </li>
-                                
                             </>
                         ) : (
                             <li className='mx-3'>
-                                <button>
-                                <a
-                                    onClick={() => router.push('/login')}
-                                    className='bg-green-500 text-white border py-2 px-3 rounded-md text-ls my-2 cursor-pointer hover:bg-green-700'
-                                >
-                                    เข้าสู่ระบบ
-                                </a>
-                                </button>
+                                <Link href="/login">
+                                    <button className='bg-green-500 text-white border py-2 px-3 rounded-md text-ls my-2 cursor-pointer hover:bg-green-700'>
+                                        เข้าสู่ระบบ
+                                    </button>
+                                </Link>
                             </li>
                         )}
                     </ul>

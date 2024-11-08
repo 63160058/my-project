@@ -4,6 +4,7 @@ import Navbar from "../../../componente/Navbar";
 import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
 
 export default function Home() {
   const router = useRouter();
@@ -21,16 +22,18 @@ export default function Home() {
   });
 
   useEffect(() => {
-    const checkSession = async () => {
-      const session = await getSession();
-      if (!session) {
-        router.push('/login');
-      } else {
-        setLoading(false);
-      }
-    };
-
-    checkSession();
+    // ดึงค่า token จาก cookie
+    const token = Cookies.get('token');
+    
+    if (token) {
+      console.log('Token:', token);
+      // เมื่อมี token ให้หยุดการแสดง Loading และแสดงเนื้อหา
+      setLoading(false);
+    } else {
+      console.log('No token found');
+      // หากไม่มี token ให้ redirect ไปยังหน้า login
+      router.push('/login');
+    }
   }, [router]);
 
   if (loading) {

@@ -5,23 +5,25 @@ import SearchableTable from "../../componente/SearchableTable_import_internal";
 import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation'; // ใช้ useRouter จาก next/navigation
 import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
 
 export default function Home() {
   const router = useRouter(); // ใช้ useRouter สำหรับการเปลี่ยนเส้นทาง
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // ใช้ getSession() เพื่อดึงข้อมูลเซสชัน
-    const checkSession = async () => {
-      const session = await getSession();
-      if (!session) {
-        router.push('/login'); // ถ้าไม่มี session จะถูกส่งไปที่หน้า login
-      } else {
-        setLoading(false); // เมื่อมี session จะหยุด loading
-      }
-    };
-
-    checkSession();
+    // ดึงค่า token จาก cookie
+    const token = Cookies.get('token');
+    
+    if (token) {
+      console.log('Token:', token);
+      // เมื่อมี token ให้หยุดการแสดง Loading และแสดงเนื้อหา
+      setLoading(false);
+    } else {
+      console.log('No token found');
+      // หากไม่มี token ให้ redirect ไปยังหน้า login
+      router.push('/login');
+    }
   }, [router]);
 
   if (loading) {

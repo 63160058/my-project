@@ -4,6 +4,7 @@ import Navbar from "../../../componente/Navbar";
 import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
 
 export default function Home() {
   const router = useRouter();
@@ -21,16 +22,18 @@ export default function Home() {
   });
 
   useEffect(() => {
-    const checkSession = async () => {
-      const session = await getSession();
-      if (!session) {
-        router.push('/login');
-      } else {
-        setLoading(false);
-      }
-    };
-
-    checkSession();
+    // ดึงค่า token จาก cookie
+    const token = Cookies.get('token');
+    
+    if (token) {
+      console.log('Token:', token);
+      // เมื่อมี token ให้หยุดการแสดง Loading และแสดงเนื้อหา
+      setLoading(false);
+    } else {
+      console.log('No token found');
+      // หากไม่มี token ให้ redirect ไปยังหน้า login
+      router.push('/login');
+    }
   }, [router]);
 
   if (loading) {
@@ -148,22 +151,7 @@ export default function Home() {
         </div>
 
         <div style={{ marginBottom: "10px" }}>
-<<<<<<< HEAD
-  <label>หมายเหตุ:</label>
-  <input
-    type="time"
-    name="time"
-    value={formData.time}
-    onChange={handleChange}
-    style={{
-      width: "100%",
-      padding: "8px",
-      border: "1px solid #ddd",
-      borderRadius: "4px",
-    }}
-  />
-</div>
-=======
+
           <label>หมายเหตุ:</label>
           <input
             type="time"
@@ -173,7 +161,6 @@ export default function Home() {
             style={{ width: "100%", padding: "8px", border: "1px solid #ddd", borderRadius: "4px" }}
           />
         </div>
->>>>>>> 31136681c73c7c442f96d14ecaa1f6265f2be9eb
 
         <button
           type="submit"
