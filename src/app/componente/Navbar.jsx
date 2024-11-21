@@ -62,10 +62,10 @@ function Navbar() {
         setIsDropdownOpen(null);
     };
 
-    if (isLoading) {
-        // แสดง loader หรือ div ว่างๆ ขณะรอโหลดสถานะ
-        return ""
-    }
+    // if (isLoading) {
+    //     // แสดง loader หรือ div ว่างๆ ขณะรอโหลดสถานะ
+    //     return ""
+    // }
 
     return (
         <nav className="bg-[#333] text-white py-5 shadow-lg">
