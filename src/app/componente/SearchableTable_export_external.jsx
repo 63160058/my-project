@@ -32,6 +32,27 @@ export default function SearchableTable() {
     fetchData();
   }, []);
 
+  const handleRemove = async (userid) => {
+    const confirmDelete = window.confirm("คุณต้องการลบข้อมูลนี้หรือไม่?");
+    if (!confirmDelete) return;
+
+    try {
+      // เรียก API เพื่อลบข้อมูลบนเซิร์ฟเวอร์
+      const response = await fetch(`/api/export/external/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("ไม่สามารถลบข้อมูลได้");
+      }
+
+      // ลบข้อมูลออกจาก state
+      setData(data.filter((row) => row.id !== userid));
+      alert("ลบข้อมูลเรียบร้อยแล้ว");
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -105,32 +126,48 @@ export default function SearchableTable() {
               <th style={{ width: "44%", padding: "8px", border: "1px solid #ddd" }}>เรื่อง</th>
               <th style={{ width: "10%", padding: "8px", border: "1px solid #ddd" }}>การปฏิบัติ</th>
               <th style={{ width: "5%", padding: "8px", border: "1px solid #ddd" }}>หมายเหตุ</th>
+              <th style={{ padding: "8px", border: "1px solid #ddd" }}>Action</th>
             </tr>
           </thead>
           <tbody>
-                        {currentItems
-                            .filter((row) => row.D_type === "external") // กรองเฉพาะแถวที่เป็น external
-                            .map((row, index) => (
-                                <tr key={row.D_id}>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
-                                        {indexOfFirstItem + index + 1} {/* ลำดับแถว */}
-                                    </td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_id}</td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
-                                        {new Date(row.D_date).toLocaleDateString()}
-                                    </td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_from}</td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_to}</td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_story}</td>
-                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_comment}</td>
-                                    
-                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
-                                      {row.D_time ? new Date(row.D_time).toLocaleTimeString('th-TH', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit' }) : ""}
-                                    </td>
+            {currentItems
+              .filter((row) => row.D_type === "external") // กรองเฉพาะแถวที่เป็น external
+              .map((row, index) => (
+                <tr key={row.D_id}>
+                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
+                    {indexOfFirstItem + index + 1} {/* ลำดับแถว */}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_id}</td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
+                    {new Date(row.D_date).toLocaleDateString()}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_from}</td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_to}</td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_story}</td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_comment}</td>
 
-                                </tr>
-                            ))}
-                    </tbody>
+                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
+                    {row.D_time ? new Date(row.D_time).toLocaleTimeString('th-TH', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit' }) : ""}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
+                    <button
+                      onClick={() => handleRemove(row.id)}
+                      style={{
+                        backgroundColor: "red",
+                        color: "white",
+                        padding: "6px 12px",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      ลบ
+                    </button>
+                  </td>
+
+                </tr>
+              ))}
+          </tbody>
         </table>
 
         {/* Pagination controls */}

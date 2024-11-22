@@ -61,3 +61,23 @@ export async function POST(req: Request) {
     );
   }
 }
+
+
+export async function DELETE(req: Request, { params }: { params: { userid: string } }) {
+  const { userid } = params;
+
+  if (!userid) {
+    return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+  }
+
+  try {
+    const deletedDocument = await prisma.officialdocument.delete({
+      where: { id: userid },
+    });
+
+    return NextResponse.json({ message: 'Document deleted successfully', data: deletedDocument });
+  } catch (error: any) {
+    console.error('Error deleting document:', error.message);
+    return NextResponse.json({ error: 'Failed to delete document', details: error.message }, { status: 500 });
+  }
+}
