@@ -64,8 +64,8 @@ export default function Home() {
       console.log("Document created successfully:", result);
       alert("ส่งข้อมูลเรียบร้อยแล้ว");
 
-      // กลับไปที่หน้า export/internal หลังจากส่งข้อมูลสำเร็จ
-      router.push('/export/internal');
+      // กลับไปที่หน้า import/internal หลังจากส่งข้อมูลสำเร็จ
+      router.push('/import/internal');
       
     } catch (error) {
       console.error("Error creating document:", error);
@@ -76,7 +76,7 @@ export default function Home() {
   return (
     <main>
       <Navbar />
-      <h1 style={{ padding: "20px" }}>เพิ่มหนังสือส่งออกราชการ (ภายใน)</h1>
+      <h1 style={{ padding: "20px" }}>เพิ่มหนังสือนำเข้าราชการ (ภายใน)</h1>
       
       <form onSubmit={handleSubmit} style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
         <div style={{ marginBottom: "10px" }}>
