@@ -1,16 +1,17 @@
 "use client";
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import bgImage from '@/app/assets/images/bg.jpg'; // นำเข้ารูปภาพจาก assets
 
 function Login() {
     const [User_email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null); // สำหรับเก็บข้อความข้อผิดพลาด
+    const [error, setError] = useState(null);
     const router = useRouter();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(null); // รีเซ็ตข้อความข้อผิดพลาดก่อน
+        setError(null);
 
         try {
             const response = await fetch("http://localhost:3000/api/login", {
@@ -21,7 +22,6 @@ function Login() {
                 body: JSON.stringify({ User_email, password }),
             });
 
-            // ตรวจสอบว่าสถานะของ response สำเร็จหรือไม่
             if (response.ok) {
                 console.log("Login successful! Redirecting to home page...");
                 router.push('/');
@@ -37,8 +37,13 @@ function Login() {
 
     return (
         <div
-            className="min-h-screen flex justify-center items-center bg-cover bg-center"
-            style={{ backgroundImage: "url('https://banpong.go.th/public/slideone_upload/backend/slideone_3_1.jpg')" }}
+            className="min-h-screen flex justify-center items-center"
+            style={{
+                backgroundImage: `url(${bgImage.src})`,
+                backgroundSize: 'cover', // ให้ขนาดรูปภาพครอบคลุมเต็มหน้าจอ
+                backgroundRepeat: 'no-repeat', // ป้องกันการทำซ้ำของรูปภาพ
+                backgroundPosition: 'righr', // จัดรูปภาพให้อยู่ตรงกลาง
+            }}
         >
             <div className="bg-white/80 p-8 rounded-md shadow-md w-96">
                 <div className="mb-5 text-center">
@@ -46,7 +51,6 @@ function Login() {
                     <h2 className="text-center text-2xl font-bold text-blue-800">เข้าสู่ระบบ</h2>
                 </div>
 
-                {/* แสดงข้อความข้อผิดพลาดถ้ามี */}
                 {error && <div className="text-red-600 mb-4 text-center">{error}</div>}
 
                 <form onSubmit={handleSubmit}>

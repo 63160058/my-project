@@ -1,7 +1,11 @@
 import { PrismaClient } from '@prisma/client';
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
+import path from "path";
+import fs from "fs";
 
 const prisma = new PrismaClient();
+
+const UPLOAD_DIR = path.resolve("src/app/assets/files");
 
 export async function GET() {
   try {
@@ -16,22 +20,42 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request) {
+export const POST = async (req: NextRequest) => {
   try {
-    const { id, date, from, to, story, comment, time } = await req.json();
+    const formData = await req.formData();
+    const body = Object.fromEntries(formData);
+
+    const file = (body.file as Blob) || null;
+
+    // Handle file upload
+    if (file) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      if (!fs.existsSync(UPLOAD_DIR)) {
+        fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+      }
+      fs.writeFileSync(
+        path.resolve(UPLOAD_DIR, (body.file as File).name),
+        buffer
+      );
+    }
+
+    // Extract other fields from formData
+    const id = body.id as string;
+    const date = body.date as string;
+    const from = body.from as string;
+    const to = body.to as string;
+    const story = body.story as string;
+    const comment = body.comment as string;
+    const time = body.time as string;
 
     // Convert D_date to ISO-8601 format
-    const D_dateISO = new Date(date).toISOString(); // Convert to ISO-8601 DateTime
+    const D_dateISO = new Date(date).toISOString();
 
     // Prepare D_time
     let D_timeString;
-
-    // Check if time is provided
     if (time) {
       const timeParts = time.split(':');
-      // Ensure timeParts has hours and minutes
       if (timeParts.length >= 2) {
-        // Create D_time using a fixed date
         D_timeString = new Date(`1970-01-01T${time}:00Z`).toISOString();
       } else {
         throw new Error('Invalid time format');
@@ -40,6 +64,7 @@ export async function POST(req: Request) {
       throw new Error('Time is required');
     }
 
+    // Save to database
     const officialdocument = await prisma.officialdocument.create({
       data: {
         D_type: 'external',
@@ -49,10 +74,13 @@ export async function POST(req: Request) {
         D_to: to,
         D_story: story,
         D_comment: comment,
-        D_time: D_timeString, // Use the converted D_time
+        D_time: D_timeString,
+        D_file: (body.file as File).name
       },
     });
+
     return NextResponse.json(officialdocument);
+
   } catch (error: any) {
     console.error('Error creating export doc:', error.message, error.stack);
     return NextResponse.json(
@@ -60,4 +88,4 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-}
+};

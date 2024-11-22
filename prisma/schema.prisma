@@ -22,14 +22,16 @@ model User {
 model officialdocument {
   id        Int      @id @default(autoincrement())
   D_id      String   @unique
-  D_date    String
+  D_date    DateTime
   D_from    String
   D_story   String
-  D_time    String
+  D_time    DateTime
   D_type    String
   D_to      String
   D_comment String
+  D_file    String?
 }
+
 
 model officialletter {
   id        Int      @id @default(autoincrement())
