@@ -37,3 +37,6 @@ yarn-error.log*
 # TypeScript
 *.tsbuildinfo  # TS build information file
 next-env.d.ts  # auto-generated file for Next.js with TypeScript
+
+
+*.pdf

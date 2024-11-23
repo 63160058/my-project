@@ -99,7 +99,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     alert("ส่งข้อมูลเรียบร้อยแล้ว");
 
     // กลับไปที่หน้า import/external หลังจากส่งข้อมูลสำเร็จ
-    router.push('/import/external');
+    router.push('/export/external');
   } catch (error) {
     console.error("Error creating document:", error);
     alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
@@ -109,7 +109,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   return (
     <main>
       <Navbar />
-      <h1 style={{ padding: "20px" }}>เพิ่มหนังสือนำเข้าราชการ (ภายใน)</h1>
+      <h1 style={{ padding: "20px" }}>เพิ่มหนังสือนำเข้าราชการ (ภายนอก)</h1>
 
       <form onSubmit={handleSubmit} style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
         <div style={{ marginBottom: "10px" }}>

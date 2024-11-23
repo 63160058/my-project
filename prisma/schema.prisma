@@ -34,7 +34,7 @@ model officialdocument {
 
 
 model officialletter {
-  id        Int      @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   L_id        String  @unique
   L_date      DateTime
   L_from      String
@@ -43,7 +43,7 @@ model officialletter {
   L_type      String 
   L_to        String
   L_comment   String
-
+  L_file      String?
 
 
 }
