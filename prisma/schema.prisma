@@ -61,14 +61,15 @@ model postnotice {
   id          Int      @id @default(autoincrement())
 }
 
-model export_doc {
-  doc_id      Int   @id @default(autoincrement())
-  num_doc     String
-  doc_date_at DateTime
-  doc_from    String
-  doc_end     String
-  doc_title   String
-  doc_main    String
-  remark      DateTime
+model event_calendar {
+  event_id     Int      @id @default(autoincrement()) // Unique ID for the event
+  title        String   // Title of the event
+  description  String?  // Description of the event (optional)
+  start_date   DateTime // Start date and time of the event
+  end_date     DateTime // End date and time of the event
+  all_day      Boolean  // Whether the event lasts all day
+  created_at   DateTime @default(now()) // Timestamp for when the event is created
+  updated_at   DateTime @updatedAt      // Timestamp for when the event is updated
 }
+
 

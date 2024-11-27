@@ -68,7 +68,7 @@ function Navbar() {
     // }
 
     return (
-        <nav className="bg-[#333] text-white py-5 shadow-lg">
+        <nav className="bg-[#334EAC] text-white py-5 shadow-lg">
             <div className="container mx-auto">
                 <div className="flex justify-between items-center">
                     {/* Main Links */}
@@ -148,8 +148,8 @@ function Navbar() {
                         >
                             ติดประกาศ
                         </Link>
+                        
                     </div>
-
                     <ul className="flex">
                         {token ? (
                             <>
