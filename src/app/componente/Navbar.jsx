@@ -79,76 +79,74 @@ function Navbar() {
                         >
                             หน้าหลัก
                         </Link>
-                        <div className="relative" ref={exportDropdownRef}>
-                            <button
-                                onClick={() => handleDropdown("export")}
-                                className="hover:text-[#FFD700] transition-colors duration-300"
-                            >
-                                หนังสือส่งออกราชการ
-                            </button>
-                            {isDropdownOpen === "export" && (
-                                <div className="absolute top-full left-0 bg-[#555] text-white p-4 shadow-md rounded-md transition-all duration-300">
+                        {token && (
+                            <>
+                                {/* Dropdown 1: หนังสือส่งออกราชการ */}
+                                <div className="relative" ref={exportDropdownRef}>
                                     <button
-                                        onClick={(e) =>
-                                            handleNavigation(e, "/export/internal")
-                                        }
-                                        type="button"
-                                        className="block hover:text-[#FFD700] p-2 text-left"
+                                        onClick={() => handleDropdown("export")}
+                                        className="hover:text-[#FFD700] transition-colors duration-300"
                                     >
-                                        ภายใน
+                                        หนังสือส่งออกราชการ
                                     </button>
-                                    <button
-                                        onClick={(e) =>
-                                            handleNavigation(e, "/export/external")
-                                        }
-                                        type="button"
-                                        className="block hover:text-[#FFD700] p-2 text-left"
-                                    >
-                                        ภายนอก
-                                    </button>
+                                    {isDropdownOpen === "export" && (
+                                        <div className="absolute top-full left-0 bg-[#555] text-white p-4 shadow-md rounded-md transition-all duration-300">
+                                            <button
+                                                onClick={(e) => handleNavigation(e, "/export/internal")}
+                                                type="button"
+                                                className="block hover:text-[#FFD700] p-2 text-left"
+                                            >
+                                                ภายใน
+                                            </button>
+                                            <button
+                                                onClick={(e) => handleNavigation(e, "/export/external")}
+                                                type="button"
+                                                className="block hover:text-[#FFD700] p-2 text-left"
+                                            >
+                                                ภายนอก
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                        </div>
 
-                        {/* Dropdown 2: หนังสือรับราชการ */}
-                        <div className="relative" ref={importDropdownRef}>
-                            <button
-                                onClick={() => handleDropdown("import")}
-                                className="hover:text-[#FFD700] transition-colors duration-300"
-                            >
-                                หนังสือนำเข้าราชการ
-                            </button>
-                            {isDropdownOpen === "import" && (
-                                <div className="absolute top-full left-0 bg-[#555] text-white p-4 shadow-md rounded-md transition-all duration-300">
+                                {/* Dropdown 2: หนังสือนำเข้าราชการ */}
+                                <div className="relative" ref={importDropdownRef}>
                                     <button
-                                        onClick={(e) =>
-                                            handleNavigation(e, "/import/internal")
-                                        }
-                                        type="button"
-                                        className="block hover:text-[#FFD700] p-2 text-left"
+                                        onClick={() => handleDropdown("import")}
+                                        className="hover:text-[#FFD700] transition-colors duration-300"
                                     >
-                                        ภายใน
+                                        หนังสือนำเข้าราชการ
                                     </button>
-                                    <button
-                                        onClick={(e) =>
-                                            handleNavigation(e, "/import/external")
-                                        }
-                                        type="button"
-                                        className="block hover:text-[#FFD700] p-2 text-left"
-                                    >
-                                        ภายนอก
-                                    </button>
+                                    {isDropdownOpen === "import" && (
+                                        <div className="absolute top-full left-0 bg-[#555] text-white p-4 shadow-md rounded-md transition-all duration-300">
+                                            <button
+                                                onClick={(e) => handleNavigation(e, "/import/internal")}
+                                                type="button"
+                                                className="block hover:text-[#FFD700] p-2 text-left"
+                                            >
+                                                ภายใน
+                                            </button>
+                                            <button
+                                                onClick={(e) => handleNavigation(e, "/import/external")}
+                                                type="button"
+                                                className="block hover:text-[#FFD700] p-2 text-left"
+                                            >
+                                                ภายนอก
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                        </div>
 
-                        <Link
-                            href="/announcements"
-                            className="hover:text-[#FFD700] transition-colors duration-300"
-                        >
-                            ติดประกาศ
-                        </Link>
-                        
+                                {/* Link to ติดประกาศ */}
+                                <Link
+                                    href="/announcements"
+                                    className="hover:text-[#FFD700] transition-colors duration-300"
+                                >
+                                    ติดประกาศ
+                                </Link>
+                            </>
+                        )}
+
                     </div>
                     <ul className="flex">
                         {token ? (
