@@ -7,7 +7,10 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'; // หรือใช้ไอคอนจากไลบรารีอื่นๆ เช่น FontAwesome
-import { PlusCircle } from 'lucide-react';// หรือใช้ไอคอนจากไลบรารีอื่นๆ เช่น FontAwesome
+// import { PlusCircle } from 'lucide-react';// หรือใช้ไอคอนจากไลบรารีอื่นๆ เช่น FontAwesome
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendarPlus } from '@fortawesome/free-solid-svg-icons';
+
 
 export default function CalendarPage() {
   const [events, setEvents] = useState([]);
@@ -62,6 +65,61 @@ export default function CalendarPage() {
     // คุณสามารถนำฟังก์ชันนี้ไปใช้ในการลบกิจกรรม
   };
 
+
+  const [showDialog, setShowDialog] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    start_date: '',
+    end_date: '',
+    all_day: false,
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // ถ้ากิจกรรมเป็น 'ตลอดวัน' ให้กำหนดเวลาใน `end_date` เป็น 59:59.999Z
+    let formattedEndDate = new Date(formData.end_date);
+    if (formData.all_day) {
+      // ตั้งเวลาเป็น 59:59.999Z ของวันสิ้นสุด
+      formattedEndDate.setHours(23, 59, 59, 999);
+    } else {
+      // ถ้าไม่ใช่กิจกรรมตลอดวัน ให้ใช้เวลาเดิม
+      formattedEndDate = new Date(formData.end_date);
+    }
+    const formattedStartDate = new Date(formData.start_date).toISOString();
+    formattedEndDate = formattedEndDate.toISOString();
+    const formattedData = {
+      ...formData,
+      start_date: formattedStartDate,
+      end_date: formattedEndDate,
+    };
+    try {
+      const response = await fetch('/api/calendar/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formattedData),  // ส่งวันที่ที่แปลงแล้ว
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log('Event created:', result);
+      setShowDialog(false); // ปิดหน้าต่างหลังจากบันทึกเสร็จสิ้น และเปลี่ยนค่า setShowDialog(false)
+      window.location.reload();
+    } catch (error) {
+      console.error('Error saving event:', error);
+    }
+  };
+
+
   return (
     <div>
       <Navbar />
@@ -70,10 +128,88 @@ export default function CalendarPage() {
         <div className="w-3/12 bg-gray-100 p-5 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-4 text-center flex justify-between items-center">
           รายการกิจกรรม
-          <button>
-            <PlusCircle className="w-5 h-5 text-green-600 hover:text-green-800" />
-          </button>
+            <button onClick={() => setShowDialog(true)}>
+              <FontAwesomeIcon icon={faCalendarPlus} className="text-[#7096D1] transition-colors duration-300 hover:text-[#1E90FF]"  />
+            </button>
+
         </h2>
+
+        {showDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50  ">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h2 className="text-xl font-bold mb-4">เพิ่มกิจกรรม</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">ชื่อกิจกรรม</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-lg p-2"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">รายละเอียด</label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-lg p-2"
+                ></textarea>
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">วันเริ่มต้น</label>
+                <input
+                  type="datetime-local"
+                  name="start_date"
+                  value={formData.start_date}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-lg p-2"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">วันสิ้นสุด</label>
+                <input
+                  type="datetime-local"
+                  name="end_date"
+                  value={formData.end_date}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-lg p-2"
+                  required
+                />
+              </div>
+              <div className="mb-4 flex items-center">
+                <input
+                  type="checkbox"
+                  name="all_day"
+                  checked={formData.all_day}
+                  onChange={handleInputChange}
+                  className="mr-2"
+                />
+                <label className="text-sm font-medium">กิจกรรมตลอดวัน</label>
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowDialog(false)}
+                  className="px-4 py-2 bg-gray-300 rounded-lg"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                >
+                  บันทึก
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
           <ul className="space-y-4">
             {visibleEvents.length > 0 ? (
@@ -84,19 +220,38 @@ export default function CalendarPage() {
                 >
                   <h3 className="font-bold text-lg">{event.title}</h3>
                   <p className="text-sm text-gray-600">
-                    {new Date(event.start_date).toLocaleDateString('th-TH')}
                     {(() => {
                       const startDate = new Date(event.start_date);
                       const endDate = new Date(event.end_date);
-                      endDate.setDate(endDate.getDate() - 1);
                       
-                      if (startDate.toLocaleDateString('th-TH') !== endDate.toLocaleDateString('th-TH')) {
-                        return ' - ' + endDate.toLocaleDateString('th-TH');
+                      // ตรวจสอบว่ากิจกรรมเป็น all-day หรือไม่
+                      if (event.all_day) {
+                        // ถ้าเริ่มและสิ้นสุดในวันเดียวกัน แสดงวันที่เดียว
+                        if (startDate.toLocaleDateString('th-TH') === endDate.toLocaleDateString('th-TH')) {
+                          return startDate.toLocaleDateString('th-TH');
+                        } else {
+                          // ถ้าเริ่มและสิ้นสุดในหลายวัน แสดงช่วงวันที่
+                          return `${startDate.toLocaleDateString('th-TH')} - ${endDate.toLocaleDateString('th-TH')}`;
+                        }
+                      }
+
+                      // ตรวจสอบว่า event ข้ามวันหรือไม่
+                      const startDateString = startDate.toLocaleDateString('th-TH');
+                      const endDateString = endDate.toLocaleDateString('th-TH');
+
+                      if (startDateString !== endDateString) {
+                        // ถ้ากิจกรรมข้ามวัน
+                        return `${startDateString} - ${endDateString}`;
                       } else {
-                        return '';
+                        // ถ้าอยู่ในวันเดียวกัน, แสดงวันที่และเวลา
+                        const startTime = startDate.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+                        const endTime = endDate.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+                        return `${startDateString} ${startTime} - ${endTime}`;
                       }
                     })()}
                   </p>
+
+
 
                   {event.all_day && (
                     <span className="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded-full">
