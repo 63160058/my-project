@@ -1,50 +1,22 @@
-// app/api/calendar/delete/route.ts
-
+import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
-import { NextResponse, NextRequest } from 'next/server';
-
 const prisma = new PrismaClient();
 
-export async function DELETE(req: NextRequest) {
-  try {
-    // Extract the id from the request body
-    const { id } = await req.json();
 
-    if (!id) {
-      return NextResponse.json(
-        { error: 'Event ID is required' },
-        { status: 400 }
-      );
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === 'DELETE') {
+    const { event_id } = req.body;
+
+    try {
+      await prisma.event_calendar.delete({
+        where: { event_id },
+      });
+      res.status(200).json({ message: 'Event deleted successfully.' });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to delete event.' });
     }
-
-    // Ensure the event exists before attempting to delete
-    const event = await prisma.event_calendar.findUnique({
-      where: { event_id: Number(id) },
-    });
-
-    if (!event) {
-      return NextResponse.json(
-        { error: 'Event not found' },
-        { status: 404 }
-      );
-    }
-
-    // Delete the event from the database
-    await prisma.event_calendar.delete({
-      where: { event_id: Number(id) },
-    });
-
-    return NextResponse.json(
-      { message: 'Event deleted successfully' },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error('Error deleting event:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    );
-  } finally {
-    await prisma.$disconnect();
+  } else {
+    res.setHeader('Allow', ['DELETE']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
