@@ -73,14 +73,15 @@ function Navbar() {
                 <div className="flex justify-between items-center">
                     {/* Main Links */}
                     <div className="flex space-x-8">
+                    {token && (
+                            <>
                         <Link
                             href="/"
                             className="hover:text-[#FFD700] transition-colors duration-300"
                         >
                             หน้าหลัก
                         </Link>
-                        {token && (
-                            <>
+                    
                                 {/* Dropdown 1: หนังสือส่งออกราชการ */}
                                 <div className="relative" ref={exportDropdownRef}>
                                     <button
