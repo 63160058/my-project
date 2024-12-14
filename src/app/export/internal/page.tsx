@@ -2,7 +2,6 @@
 
 import Navbar from "../../componente/Navbar";
 import SearchableTable from "../../componente/SearchableTable_export_internal";
-import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation'; // ใช้ useRouter จาก next/navigation
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
@@ -16,7 +15,7 @@ export default function Home() {
     const token = Cookies.get('token');
     
     if (token) {
-      console.log('Token:', token);
+      // console.log('Token:', token);
       // เมื่อมี token ให้หยุดการแสดง Loading และแสดงเนื้อหา
       setLoading(false);
     } else {

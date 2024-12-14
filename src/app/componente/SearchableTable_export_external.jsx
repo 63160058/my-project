@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { faPencil, faDownload, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function SearchableTable() {
   const [data, setData] = useState([]);
@@ -16,7 +18,7 @@ export default function SearchableTable() {
     // Fetch data from the API
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/export/external"); // Adjust the URL if needed
+        const response = await fetch("/api/export/internal"); // Adjust the URL if needed
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -31,27 +33,6 @@ export default function SearchableTable() {
 
     fetchData();
   }, []);
-
-  const handleRemove = async (userid) => {
-    const confirmDelete = window.confirm("คุณต้องการลบข้อมูลนี้หรือไม่?");
-    if (!confirmDelete) return;
-
-    try {
-      // เรียก API เพื่อลบข้อมูลบนเซิร์ฟเวอร์
-      const response = await fetch(`/api/export/external/${encodeURIComponent(id)}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) {
-        throw new Error("ไม่สามารถลบข้อมูลได้");
-      }
-
-      // ลบข้อมูลออกจาก state
-      setData(data.filter((row) => row.id !== userid));
-      alert("ลบข้อมูลเรียบร้อยแล้ว");
-    } catch (error) {
-      alert(error.message);
-    }
-  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -69,12 +50,12 @@ export default function SearchableTable() {
     );
   });
 
-  const thaiTimes = data.map((row) => {
-    if (row.D_time) {
-      return new Date(row.D_time).toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' });
-    }
-    return ""; // คืนค่าว่างถ้าไม่มีเวลา
-  });
+  // const thaiTimes = data.map((row) => {
+  //   if (row.D_time) {
+  //     return new Date(row.D_time).toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' });
+  //   }
+  //   return ""; // คืนค่าว่างถ้าไม่มีเวลา
+  // });
 
 
   // Pagination logic
@@ -93,6 +74,37 @@ export default function SearchableTable() {
     setCurrentPage(1); // รีเซ็ตกลับไปที่หน้าที่ 1 เมื่อเปลี่ยนจำนวนข้อมูลต่อหน้า
   };
 
+
+  const Download_file = async (fileName) => {
+    try {
+      const response = await fetch('/api/download', {
+        method: 'POST', // ใช้ POST เพื่อส่งข้อมูล
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fileName }), // ส่งข้อมูลเป็น JSON
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch file');
+      }
+  
+      // แปลง response เป็น Blob
+      const blob = await response.blob();
+  
+      // สร้าง URL เพื่อดาวน์โหลดไฟล์
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName; // ตั้งชื่อไฟล์ที่จะดาวน์โหลด
+      a.click();
+      window.URL.revokeObjectURL(url); // ลบ URL ออกจากหน่วยความจำ
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
+  
+
   return (
     <div style={{ padding: "20px" }}>
       <div>
@@ -105,13 +117,14 @@ export default function SearchableTable() {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ padding: "8px", width: "40%", border: "1px solid #ddd", borderRadius: "4px" }}
           />
-          <a
+
+          <button
             type="button"
-            href="/export/external/add"
-            style={{ backgroundColor: "#4CAF50", color: "white", padding: "8px 16px", border: "none", borderRadius: "4px", cursor: "pointer", marginLeft: "10px" }}
+            onClick={() => window.location.href="/export/internal/add" } // ส่งค่า eventIdToDelete ไปยังฟังก์ชันลบ
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
           >
             เพิ่มข้อมูล
-          </a>
+          </button>
         </div>
 
         {/* ตารางข้อมูล */}
@@ -126,48 +139,57 @@ export default function SearchableTable() {
               <th style={{ width: "44%", padding: "8px", border: "1px solid #ddd" }}>เรื่อง</th>
               <th style={{ width: "10%", padding: "8px", border: "1px solid #ddd" }}>การปฏิบัติ</th>
               <th style={{ width: "5%", padding: "8px", border: "1px solid #ddd" }}>หมายเหตุ</th>
-              <th style={{ padding: "8px", border: "1px solid #ddd" }}>Action</th>
+              <th style={{ width: "5%", padding: "8px", border: "1px solid #ddd" }}>Action</th>
             </tr>
           </thead>
           <tbody>
-            {currentItems
-              .filter((row) => row.D_type === "external") // กรองเฉพาะแถวที่เป็น external
-              .map((row, index) => (
-                <tr key={row.D_id}>
-                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
-                    {indexOfFirstItem + index + 1} {/* ลำดับแถว */}
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_id}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
-                    {new Date(row.D_date).toLocaleDateString()}
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_from}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_to}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_story}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_comment}</td>
+                        {currentItems
+                            .filter((row) => row.D_type === "external") // กรองเฉพาะแถวที่เป็น external
+                            .map((row, index) => (
+                                <tr key={row.D_id}>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
+                                        {indexOfFirstItem + index + 1} {/* ลำดับแถว */}
+                                    </td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_id}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
+                                        {new Date(row.D_date).toLocaleDateString()}
+                                    </td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_from}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_to}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.D_story}</td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>{row.D_comment}</td>
 
-                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
-                    {row.D_time ? new Date(row.D_time).toLocaleTimeString('th-TH', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit' }) : ""}
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
-                    <button
-                      onClick={() => handleRemove(row.id)}
-                      style={{
-                        backgroundColor: "red",
-                        color: "white",
-                        padding: "6px 12px",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      ลบ
-                    </button>
-                  </td>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
+                                      {row.D_time ? new Date(row.D_time).toLocaleTimeString('th-TH', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit' }) : ""}
+                                    </td>
 
-                </tr>
-              ))}
-          </tbody>
+                                    <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
+                                      <button
+                                        type="button"
+                                        onClick={() => Download_file(row.D_file)}  // ส่งค่า eventIdToDelete ไปยังฟังก์ชันลบ
+                                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                                      >
+                                        <FontAwesomeIcon icon={faDownload} className="text-[#ffffff] transition-colors duration-300 hover:text-[#1E90FF]"  />
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => edit_row(row.D_id)}  // ส่งค่า eventIdToDelete ไปยังฟังก์ชันลบ
+                                        className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
+                                      >
+                                        <FontAwesomeIcon icon={faPencil} className="text-[#ffffff] transition-colors duration-300 "  />
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => delete_row(row.D_id)}  // ส่งค่า eventIdToDelete ไปยังฟังก์ชันลบ
+                                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                                      >
+                                        <FontAwesomeIcon icon={faTrash} className="text-[#ffffff] transition-colors duration-300 "  />
+                                      </button>
+                                    </td>
+
+                                </tr>
+                            ))}
+                    </tbody>
         </table>
 
         {/* Pagination controls */}
