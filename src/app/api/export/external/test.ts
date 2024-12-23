@@ -9,12 +9,12 @@ const UPLOAD_DIR = path.resolve("src/app/assets/files");
 
 export async function GET() {
   try {
-    const officialletter = await prisma.officialletter.findMany();
-    return NextResponse.json(officialletter);
+    const officialdocument = await prisma.officialdocument.findMany();
+    return NextResponse.json(officialdocument);
   } catch (error: any) {
     console.error('Error fetching export docs:', error.message, error.stack);
     return NextResponse.json(
-      { error: 'External Server Error', details: error.message },
+      { error: 'Internal Server Error', details: error.message },
       { status: 500 }
     );
   }
@@ -48,15 +48,15 @@ export const POST = async (req: NextRequest) => {
     const comment = body.comment as string;
     const time = body.time as string;
 
-    // Convert L_date to ISO-8601 format
-    const L_dateISO = new Date(date).toISOString();
+    // Convert D_date to ISO-8601 format
+    const D_dateISO = new Date(date).toISOString();
 
-    // Prepare L_time
-    let L_timeString;
+    // Prepare D_time
+    let D_timeString;
     if (time) {
       const timeParts = time.split(':');
       if (timeParts.length >= 2) {
-        L_timeString = new Date(`1970-01-01T${time}:00Z`).toISOString();
+        D_timeString = new Date(`1970-01-01T${time}:00Z`).toISOString();
       } else {
         throw new Error('Invalid time format');
       }
@@ -65,21 +65,21 @@ export const POST = async (req: NextRequest) => {
     }
 
     // Save to database
-    const officialletter = await prisma.officialletter.create({
+    const officialdocument = await prisma.officialdocument.create({
       data: {
-        L_type: 'external',
-        L_id: id,
-        L_date: L_dateISO,
-        L_from: from,
-        L_to: to,
-        L_story: story,
-        L_comment: comment,
-        L_time: L_timeString,
-        L_file: (body.file as File).name
+        D_type: 'external',
+        D_id: id,
+        D_date: D_dateISO,
+        D_from: from,
+        D_to: to,
+        D_story: story,
+        D_comment: comment,
+        D_time: D_timeString,
+        D_file: (body.file as File).name
       },
     });
 
-    return NextResponse.json(officialletter);
+    return NextResponse.json(officialdocument);
 
   } catch (error: any) {
     console.error('Error creating export doc:', error.message, error.stack);
@@ -88,4 +88,24 @@ export const POST = async (req: NextRequest) => {
       { status: 500 }
     );
   }
-};
+}
+
+
+export async function DELETE(req: Request, { params }: { params: { userid: string } }) {
+  const { userid } = params;
+
+  if (!userid) {
+    return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+  }
+
+  try {
+    const deletedDocument = await prisma.officialdocument.delete({
+      where: { id: userid },
+    });
+
+    return NextResponse.json({ message: 'Document deleted successfully', data: deletedDocument });
+  } catch (error: any) {
+    console.error('Error deleting document:', error.message);
+    return NextResponse.json({ error: 'Failed to delete document', details: error.message }, { status: 500 });
+  }
+}

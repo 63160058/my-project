@@ -219,27 +219,27 @@ export default function CalendarPage() {
     return new Date(dateTime).toISOString().slice(0, 16);
   };
 
-  const handleEdit = async (eventId) => {
-    try {
-      const response = await fetch(`/api/calendar/list/${eventId}`);
-      if (!response.ok) {
-        throw new Error('ไม่สามารถดึงข้อมูลกิจกรรม');
-      }
-      const data = await response.json();
+    const handleEdit = async (eventId) => {
+      try {
+        const response = await fetch(`/api/calendar/list/${eventId}`);
+        if (!response.ok) {
+          throw new Error('ไม่สามารถดึงข้อมูลกิจกรรม');
+        }
+        const data = await response.json();
 
-      setEventData({
-        event_id: data.event_id,
-        title: data.title,
-        description: data.description,
-        start_date: formatDateTime(data.start_date),
-        end_date: formatDateTime(data.end_date),
-        all_day: data.all_day,
-      });
-      setShowDialog_edit(true); // เปิดหน้าต่างแก้ไข
-    } catch (error) {
-      console.error('เกิดข้อผิดพลาดในการดึงข้อมูลกิจกรรม:', error);
-    }
-  };
+        setEventData({
+          event_id: data.event_id,
+          title: data.title,
+          description: data.description,
+          start_date: formatDateTime(data.start_date),
+          end_date: formatDateTime(data.end_date),
+          all_day: data.all_day,
+        });
+        setShowDialog_edit(true); // เปิดหน้าต่างแก้ไข
+      } catch (error) {
+        console.error('เกิดข้อผิดพลาดในการดึงข้อมูลกิจกรรม:', error);
+      }
+    };
 
 
   

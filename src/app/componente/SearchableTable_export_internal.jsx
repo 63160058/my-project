@@ -10,6 +10,25 @@ export default function SearchableTable() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showDialog_edit, setShowDialog_edit] = useState(false);
+  const [eventIdToDelete, setEventIdToDelete] = useState(null);
+  const [showDialog_delete, setShowDialog_delete] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
+  };
+
+  const [formData, setFormData] = useState({
+    id: '',
+    D_id: '',
+    date: '',
+    from: '',
+    to: '',
+    story: '',
+    action: '',
+    comment: '',
+    time: ''
+  });
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,12 +70,6 @@ export default function SearchableTable() {
     );
   });
 
-  // const thaiTimes = data.map((row) => {
-  //   if (row.D_time) {
-  //     return new Date(row.D_time).toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' });
-  //   }
-  //   return ""; // คืนค่าว่างถ้าไม่มีเวลา
-  // });
 
 
   // Pagination logic
@@ -121,11 +134,27 @@ export default function SearchableTable() {
   
     }
   }
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const format_DateTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0]; // แปลงเป็น 'YYYY-MM-DD'
+  };
+
+  const formatTime = (timeString) => {
+    if (!timeString) return '';
+    const date = new Date(timeString);
+    const hours = date.getUTCHours().toString().padStart(2, '0');
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
   
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value } = e.target;
-  //   setFormData({ ...formData, [name]: value });
-  // };
 
 
   const handleEdit = async (Id) => {
@@ -138,14 +167,20 @@ export default function SearchableTable() {
 
       console.log(data);
 
-      // setEventData({
-      //   event_id: data.event_id,
-      //   title: data.title,
-      //   description: data.description,
-      //   start_date: formatDateTime(data.start_date),
-      //   end_date: formatDateTime(data.end_date),
-      //   all_day: data.all_day,
-      // });
+      setFormData({
+        id: data.id,
+        D_id: data.D_id,
+        date: format_DateTime(data.D_date),
+        from: data.D_from,
+        to: data.D_to,
+        story: data.D_story,
+        action: data.D_action,
+        comment: data.D_comment,
+        time: formatTime(data.D_time)
+      });
+
+
+
       setShowDialog_edit(true); // เปิดหน้าต่างแก้ไข
     } catch (error) {
       // console.error('เกิดข้อผิดพลาดในการดึงข้อมูลหนังสือส่งออกราชการ (ภายใน)', error);
@@ -153,32 +188,85 @@ export default function SearchableTable() {
   };
 
   const handleUpdate = async (Id) => {
+    const data = new FormData();
+  
+    // เพิ่มข้อมูลฟอร์มเข้าไปใน FormData
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value) {
+        data.append(key, value.toString());
+      }
+    });
+  
+    // เพิ่มไฟล์ PDF ที่อัปโหลด (ถ้ามี)
+    const fileInput = document.querySelector('input[name="file"]');
+    if (fileInput?.files?.[0]) {
+      data.append('file', fileInput.files[0]);
+    }
+  
     try {
-      // if (!eventData.title || !eventData.start_date || !eventData.end_date) {
-      //   alert('กรุณากรอกข้อมูลให้ครบถ้วน');
-      //   return;
-      // }
-
       const response = await fetch(`/api/export/internal/edit/${Id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedData),
+        body: data, // ส่ง FormData แทน JSON
       });
-
+  
+      // ตรวจสอบสถานะการตอบกลับ
       if (!response.ok) {
-        throw new Error(`เกิดข้อผิดพลาด HTTP! สถานะ: ${response.status}`);
+        const errorDetails = await response.text(); // อ่านข้อความจาก response
+        throw new Error(`เกิดข้อผิดพลาด HTTP! สถานะ: ${response.status}, ข้อความ: ${errorDetails}`);
       }
-
+  
+      // ตรวจสอบว่าเนื้อหาของการตอบกลับเป็น JSON
       const result = await response.json();
       console.log('อัปเดตหนังสือส่งออกราชการ (ภายใน)สำเร็จ:', result);
-
+  
       setShowDialog_edit(false);
-      window.location.reload(); // รีเฟรชข้อมูล
+      // window.location.reload(); // รีเฟรชข้อมูล
     } catch (error) {
-      console.error('เกิดข้อผิดพลาดในการอัปเดตหนังสือส่งออกราชการ (ภายใน)', error);
-      alert('เกิดข้อผิดพลาดในการอัปเดตหนังสือส่งออกราชการ (ภายใน)');
+      // console.error('เกิดข้อผิดพลาดในการอัปเดตหนังสือส่งออกราชการ (ภายใน)', error);
+      // alert(`เกิดข้อผิดพลาดในการอัปเดตหนังสือส่งออกราชการ (ภายใน): ${error.message}`);
     }
   };
+  
+  const handleFileAndInputChange = (e) => {
+    handleFileUpload(e);
+    handleInputChange(e);
+  };
+
+  const handleDelete2 = async (Id) => {
+    const E_ID = Id;
+    console.log('กำลังลบกิจกรรมที่มี ID:', E_ID);
+
+    const formattedData1 = {
+      Id: Id,
+    };
+
+    try {
+      const response = await fetch(`/api/export/internal/delete/${Id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formattedData1),
+      });
+
+      if (response.ok) {
+        console.log('ลบกิจกรรมสำเร็จ');
+        setShowDialog_delete(false);
+        window.location.reload(); // รีเฟรชข้อมูล
+      } else {
+        console.error('ไม่สามารถลบกิจกรรมได้');
+      }
+    } catch (error) {
+      console.error('เกิดข้อผิดพลาดในการลบกิจกรรม:', error);
+    }
+  };
+
+  const handleDelete = (Id) => {
+    console.log('กำลังลบหนังสือส่งออกราชการ (ภายใน) ID:', Id);
+    setEventIdToDelete(Id); // เก็บ ID ของกิจกรรมที่ต้องการลบ
+    setShowDialog_delete(true); // เปิดหน้าต่างยืนยันการลบ
+  };
+
+
+
 
   return (
     <div style={{ padding: "20px" }}>
@@ -255,7 +343,7 @@ export default function SearchableTable() {
                                       </button>
                                       <button
                                         type="button"
-                                        onClick={() => delete_row(row.D_id)}  // ส่งค่า eventIdToDelete ไปยังฟังก์ชันลบ
+                                        onClick={() => handleDelete(row.id)}  // ส่งค่า eventIdToDelete ไปยังฟังก์ชันลบ
                                         className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
                                       >
                                         <FontAwesomeIcon icon={faTrash} className="text-[#ffffff] transition-colors duration-300 "  />
@@ -313,28 +401,30 @@ export default function SearchableTable() {
       {showDialog_edit && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-md shadow-lg max-w-lg w-full">
-            <h3 className="text-2xl font-bold mb-4">แก้ไขกิจกรรม</h3>
-            <form onSubmit={() => handleUpdate(edit_id)}>
+            <h3 className="text-2xl font-bold mb-4">แก้ไขหนังสือส่งออกราชการ (ภายใน)</h3>
+            <form onSubmit={() => handleUpdate(formData.id)}>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2" htmlFor="id">ที่:</label>
                 <input
                   type="text"
-                  id="id"
-                  name="id"
+                  id="D_id"
+                  name="D_id"
+                  value={formData.D_id}
+                  onChange={handleInputChange}
                   className="w-full p-3 border border-gray-300 rounded-md"
-                  // value={eventData.title}
-                  // onChange={handleInputChange1}
+
                 />
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2" htmlFor="date">ลงวันที่:</label>
                 <input
-                  type="datetime-local"
+                  type="date"
                   id="date"
                   name="date"
+                  value={formData.date}
+                  onChange={handleInputChange}
                   className="w-full p-3 border border-gray-300 rounded-md"
-                  // value={eventData.start_date}
-                  // onChange={handleInputChange1}
+
                 />
               </div>
               <div className="mb-4">
@@ -343,9 +433,10 @@ export default function SearchableTable() {
                   type="text"
                   id="from"
                   name="from"
+                  value={formData.from}
+                  onChange={handleInputChange}
                   className="w-full p-3 border border-gray-300 rounded-md"
-                  // value={eventData.title}
-                  // onChange={handleInputChange1}
+
                 />
               </div>
               <div className="mb-4">
@@ -354,9 +445,10 @@ export default function SearchableTable() {
                   type="text"
                   id="to"
                   name="to"
+                  value={formData.to}
+                  onChange={handleInputChange}
                   className="w-full p-3 border border-gray-300 rounded-md"
-                  // value={eventData.title}
-                  // onChange={handleInputChange1}
+
                 />
               </div>
               <div className="mb-4">
@@ -365,9 +457,10 @@ export default function SearchableTable() {
                   type="text"
                   id="story"
                   name="story"
+                  value={formData.story}
+                  onChange={handleInputChange}
                   className="w-full p-3 border border-gray-300 rounded-md"
-                  // value={eventData.title}
-                  // onChange={handleInputChange1}
+
                 />
               </div>
               <div className="mb-4">
@@ -376,22 +469,37 @@ export default function SearchableTable() {
                   type="text"
                   id="comment"
                   name="comment"
+                  value={formData.comment}
+                  onChange={handleInputChange}
                   className="w-full p-3 border border-gray-300 rounded-md"
-                  // value={eventData.title}
-                  // onChange={handleInputChange1}
+
                 />
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2" htmlFor="time">หมายเหตุ:</label>
                 <input
-                  type="text"
+                  type="time"
                   id="time"
                   name="time"
+                  value={formData.time}
+                  onChange={handleInputChange}
                   className="w-full p-3 border border-gray-300 rounded-md"
-                  // value={eventData.title}
-                  // onChange={handleInputChange1}
+
                 />
               </div>
+              <div className="mb-4 flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="upload-pdf"
+                  checked={isChecked}
+                  onChange={handleCheckboxChange}
+                  className="w-4 h-4 cursor-pointer"
+                />
+                <label htmlFor="upload-pdf" className="text-sm font-medium cursor-pointer">
+                  ต้องการอัพโหลด PDF ใหม่หรือไม่?
+                </label>
+              </div>
+              {isChecked && (
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2" htmlFor="time">หมายเหตุ:</label>
                 <input
@@ -399,35 +507,13 @@ export default function SearchableTable() {
                   id="file"
                   name="file"
                   accept="application/pdf"
-                  onChange={handleFileUpload}
+                  onChange={handleFileAndInputChange}
                   className="w-full p-3 border border-gray-300 rounded-md"
-                  // value={eventData.title}
-                  // onChange={handleInputChange1}
-                />
-              </div>
 
-              {/* <div className="mb-4">
-                <label className="block text-sm font-medium mb-2" htmlFor="end_date">วันที่สิ้นสุด</label>
-                <input
-                  type="datetime-local"
-                  id="end_date"
-                  name="end_date"
-                  className="w-full p-3 border border-gray-300 rounded-md"
-                  value={eventData.end_date}
-                  onChange={handleInputChange1}
                 />
               </div>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="all_day"
-                  name="all_day"
-                  className="mr-2"
-                  checked={eventData.all_day}
-                  onChange={handleInputChange1}
-                />
-                <label htmlFor="all_day" className="text-sm">กิจกรรมตลอดวัน</label>
-              </div> */}
+              )}
+
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
@@ -437,11 +523,38 @@ export default function SearchableTable() {
                 >
                   ยกเลิก
                 </button>
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                <button
+                type="submit"
+                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700">
                   แก้ไข
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showDialog_delete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h2 className="text-xl font-bold mb-4">ยืนยันการลบหนังสือส่งออกราชการ (ภายใน)</h2>
+            <p>คุณต้องการลบหนังสือส่งออกราชการ (ภายใน) หรือ ไม่?</p>
+            <div className="flex justify-end gap-2">
+                <button
+                type="button"
+                onClick={() => setShowDialog_delete(false)}
+                className="px-4 py-2 bg-gray-300 rounded-lg hover:text-gray-700"
+                >
+                ยกเลิก
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDelete2(eventIdToDelete)}  // ส่งค่า eventIdToDelete ไปยังฟังก์ชันลบ
+                className="px-4 py-2 bg-red-600 text-white rounded-lg"
+              >
+                ลบ
+              </button>
+            </div>
           </div>
         </div>
       )}

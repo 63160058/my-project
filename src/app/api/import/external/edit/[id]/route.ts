@@ -23,19 +23,19 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
     return NextResponse.json({ error: 'Invalid or missing form data' }, { status: 400 });
   }
 
-  const { D_id, date, time, from, to, story, comment, file } = body;
-  console.log('UPDATE event with data:', { D_id, date, time, from, to, story, comment, file });
+  const { L_id, date, time, from, to, story, comment, file } = body;
+  console.log('UPDATE event with data:', { L_id, date, time, from, to, story, comment, file });
 
   try {
     // เตรียมข้อมูลที่จะอัปเดต
     const updateData: any = {
-      D_id,
-      D_date: new Date(date),
-      D_time: new Date(`${date}T${time}:00Z`),
-      D_from: from,
-      D_to: to,
-      D_story: story,
-      D_comment: comment,
+      L_id,
+      L_date: new Date(date),
+      L_time: new Date(`${date}T${time}:00Z`),
+      L_from: from,
+      L_to: to,
+      L_story: story,
+      L_comment: comment,
     };
 
     // จัดการไฟล์ PDF ที่อัปโหลด
@@ -52,11 +52,11 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
       fs.writeFileSync(filePath, buffer); // บันทึกไฟล์ในระบบ
 
       // เพิ่มชื่อไฟล์ในข้อมูลที่อัปเดต
-      updateData.D_file = (file as File).name;
+      updateData.L_file = (file as File).name;
     }
 
     // อัปเดตข้อมูลในฐานข้อมูล
-    const updatedEvent = await prisma.officialdocument.update({
+    const updatedEvent = await prisma.officialletter.update({
       where: { id: Number(id) },
       data: updateData,
     });

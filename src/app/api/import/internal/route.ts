@@ -14,7 +14,7 @@ export async function GET() {
   } catch (error: any) {
     console.error('Error fetching export docs:', error.message, error.stack);
     return NextResponse.json(
-      { error: 'Internal Server Error', details: error.message },
+      { error: 'External Server Error', details: error.message },
       { status: 500 }
     );
   }
@@ -48,10 +48,10 @@ export const POST = async (req: NextRequest) => {
     const comment = body.comment as string;
     const time = body.time as string;
 
-    // Convert D_date to ISO-8601 format
+    // Convert L_date to ISO-8601 format
     const L_dateISO = new Date(date).toISOString();
 
-    // Prepare D_time
+    // Prepare L_time
     let L_timeString;
     if (time) {
       const timeParts = time.split(':');
@@ -67,7 +67,7 @@ export const POST = async (req: NextRequest) => {
     // Save to database
     const officialletter = await prisma.officialletter.create({
       data: {
-        L_type: 'internal',
+        L_type: 'external',
         L_id: id,
         L_date: L_dateISO,
         L_from: from,

@@ -14,7 +14,7 @@ export async function GET() {
   } catch (error: any) {
     console.error('Error fetching export docs:', error.message, error.stack);
     return NextResponse.json(
-      { error: 'Internal Server Error', details: error.message },
+      { error: 'External Server Error', details: error.message },
       { status: 500 }
     );
   }
@@ -88,24 +88,4 @@ export const POST = async (req: NextRequest) => {
       { status: 500 }
     );
   }
-}
-
-
-export async function DELETE(req: Request, { params }: { params: { userid: string } }) {
-  const { userid } = params;
-
-  if (!userid) {
-    return NextResponse.json({ error: 'ID is required' }, { status: 400 });
-  }
-
-  try {
-    const deletedDocument = await prisma.officialdocument.delete({
-      where: { id: userid },
-    });
-
-    return NextResponse.json({ message: 'Document deleted successfully', data: deletedDocument });
-  } catch (error: any) {
-    console.error('Error deleting document:', error.message);
-    return NextResponse.json({ error: 'Failed to delete document', details: error.message }, { status: 500 });
-  }
-}
+};
