@@ -73,3 +73,19 @@ model event_calendar {
 }
 
 
+model announcements {
+  id                Int      @id @default(autoincrement())
+  A_date1           DateTime
+  A_Agency          String
+  A_Book_number     String
+  A_date2           DateTime
+  A_Subject         String
+  A_date3           DateTime
+  A_endorser1       String
+  A_date4           DateTime
+  A_date5           DateTime
+  A_endorser2       String
+  created_at   DateTime @default(now()) // Timestamp for when the event is created
+  updated_at   DateTime @updatedAt 
+}
+

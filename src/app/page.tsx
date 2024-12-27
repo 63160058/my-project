@@ -245,9 +245,9 @@ export default function CalendarPage() {
   
   return (
     <div>
-      <Navbar />
+      <Navbar  />
 
-      <div className="flex w-full px-10 gap-8">
+      <div className="flex w-full px-10 gap-8 mt-20 ">
         <div className="w-3/12 bg-gray-100 p-5 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-4 text-center flex justify-between items-center">
           รายการกิจกรรม

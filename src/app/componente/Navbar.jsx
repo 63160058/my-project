@@ -68,7 +68,7 @@ function Navbar() {
     // }
 
     return (
-        <nav className="bg-[#334EAC] text-white py-5 shadow-lg">
+        <nav className="bg-[#334EAC] text-white py-5 shadow-lg z-20">
             <div className="container mx-auto">
                 <div className="flex justify-between items-center">
                     {/* Main Links */}

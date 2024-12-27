@@ -32,7 +32,7 @@ export default function Home() {
   return (
     <main>
       <Navbar />
-      <h1 style={{ padding: "20px" }}>หนังสือส่งออกราชการ (ภายใน)</h1>
+      <h1 style={{ padding: "20px" ,fontSize: "36px"}}>หนังสือส่งออกราชการ (ภายใน)</h1>
       <SearchableTable />
     </main>
   );

@@ -1,7 +1,7 @@
 "use client";
 
-import Navbar from "../../componente/Navbar";
-import SearchableTable from "../../componente/SearchableTable_export_external";
+import Navbar from "../componente/Navbar";
+import SearchableTable from "../componente/SearchableTable_announcements";
 import { useRouter } from 'next/navigation'; // ใช้ useRouter จาก next/navigation
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
@@ -32,7 +32,7 @@ export default function Home() {
   return (
     <main>
       <Navbar />
-      <h1 style={{ padding: "20px" ,fontSize: "36px"}}>หนังสือส่งออกราชการ (ภายนอก)</h1>
+      <h1 style={{ padding: "20px" ,fontSize: "36px" }}><b>ติดประกาศ</b></h1>
       <SearchableTable />
     </main>
   );

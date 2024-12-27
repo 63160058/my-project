@@ -109,7 +109,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   return (
     <main>
       <Navbar />
-      <h1 style={{ padding: "20px" }}>เพิ่มหนังสือนำเข้าราชการ (ภายใน)</h1>
+      <h1 style={{ padding: "20px" ,fontSize: "36px"}}>เพิ่มหนังสือนำเข้าราชการ (ภายใน)</h1>
 
       <form onSubmit={handleSubmit} style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
         <div style={{ marginBottom: "10px" }}>

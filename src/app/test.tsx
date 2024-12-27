@@ -243,8 +243,8 @@ const Calendar: React.FC = () => {
         </dialog>
       )}
 
-      <div className="flex w-full px-10 gap-8">
-        <div className="w-3/12 bg-gray-100 p-5 rounded-lg shadow-lg">
+      <div className="flex w-full px-10 gap-8 m">
+        <div className="w-3/12 bg-gray-100 p-5 rounded-lg shadow-lg z-10">
           <h2 className="text-2xl font-bold mb-4 text-center">รายการกิจกรรม</h2>
           <h2 className="text-2xl font-bold mb-4 text-center">{calendarTitle}</h2>
           <ul className="space-y-4">
