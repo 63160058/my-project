@@ -307,7 +307,7 @@ export default function SearchableTable() {
           </thead>
           <tbody>
                         {currentItems
-                            .filter((row) => row.D_type === "internal") // กรองเฉพาะแถวที่เป็น external
+                            .filter((row) => row.D_type === "internal" && (row.D_id.includes(searchTerm) || row.D_date.includes(searchTerm) || row.D_from.includes(searchTerm) || row.D_story.includes(searchTerm) || row.D_time.includes(searchTerm)|| row.D_to.includes(searchTerm) || row.D_comment.includes(searchTerm))) // กรองเฉพาะแถวที่เป็น internal
                             .map((row, index) => (
                                 <tr key={row.D_id}>
                                     <td style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>

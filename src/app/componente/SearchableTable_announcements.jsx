@@ -81,9 +81,24 @@ export default function SearchableTable() {
 
   // ฟังก์ชันสำหรับกรองข้อมูลตามคำค้นหา
 const filteredData = data.filter((row) => {
+
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+
+    // console.log(date);
+    if (isNaN(date)) return ""; // ตรวจสอบว่าเป็นวันที่ที่ถูกต้อง
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+  const formattedDate1 = formatDate(row.A_date1);
+
+
   return (
     row.id.toString().includes(searchTerm) || // Convert `id` to string
-    row.A_date1.toString().includes(searchTerm) || // Convert date fields to strings if necessary
+     // Convert date fields to strings if necessary
     row.A_Agency.includes(searchTerm) ||
     row.A_Book_number.includes(searchTerm) ||
     row.A_date2.toString().includes(searchTerm) ||
@@ -116,12 +131,15 @@ const filteredData = data.filter((row) => {
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
+
+    // console.log(date);
     if (isNaN(date)) return ""; // ตรวจสอบว่าเป็นวันที่ที่ถูกต้อง
     const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // เดือนเริ่มจาก 0
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
+    return `${day}/${month}/${year}`;
   };
+  
 
 
   const handleAddNewData = async (e) => {
@@ -231,53 +249,6 @@ const filteredData = data.filter((row) => {
     }
   };
 
-  // const handleUpdate = async (Id) => {
-  //   const data = {
-  //     A_date1: formData1.A_date1,
-  //     A_Book_number: formData1.A_Book_number,
-  //     A_date2: formData1.A_date2,
-  //     A_Subject: formData1.A_Subject,
-  //     A_date3: formData1.A_date3,
-  //     A_endorser1: formData1.A_endorser1,
-  //     A_date4: formData1.A_date4,
-  //     A_date5: formData1.A_date5,
-  //     A_endorser2: formData1.A_endorser2,
-  //     A_Agency: formData1.A_Agency,
-  //   };
-  
-  //   console.log('กำลังอัปเดตข้อมูลติดประกาศ:', data);
-  
-  //   try {
-  //     const response = await fetch(`/api/announcements/edit/${Id}`, {
-  //       method: 'PUT',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify(data), // Send JSON data
-  //     });
-  
-  //     // Check if the response is not OK (non-2xx status)
-  //     if (!response.ok) {
-  //       const errorDetails = await response.text();
-  //       throw new Error(`HTTP Error! Status: ${response.status}, Message: ${errorDetails}`);
-  //     }
-  
-  //     // Ensure the response is JSON and parse it
-  //     let result;
-  //     try {
-  //       result = await response.json();
-  //     } catch (jsonError) {
-  //       throw new Error('Failed to parse response as JSON');
-  //     }
-  
-  //     console.log('Update successful:', result);
-  
-  //     setShowDialog_edit(false);
-  //     // window.location.reload(); // Uncomment if you want to refresh the page
-  
-  //   } catch (error) {
-  //     console.error('Error updating announcement:', error);
-  //     alert(`Error: ${error.message}`);
-  //   }
-  // };
   
   const handleUpdate = async (Id) => {
     try {
@@ -366,7 +337,7 @@ const filteredData = data.filter((row) => {
           </thead>
           <tbody>
             {currentItems
-            .filter((row) => row.A_date1.includes(searchTerm))
+            .filter((row) => row.A_date1.toString().includes(searchTerm) || row.A_Agency.includes(searchTerm) || row.A_Book_number.includes(searchTerm) || row.A_date2.includes(searchTerm) || row.A_Subject.includes(searchTerm) || row.A_date3.includes(searchTerm) || row.A_endorser1.includes(searchTerm) || row.A_date4.includes(searchTerm) || row.A_date5.includes(searchTerm) || row.A_endorser2.includes(searchTerm))
               .map((row, index) => (
             <tr key={row.id}>
               <td style={{ border: "1px solid #ddd", padding: "8px" }}>{indexOfFirstItem + index + 1}</td>
