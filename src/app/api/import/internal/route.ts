@@ -67,7 +67,7 @@ export const POST = async (req: NextRequest) => {
     // Save to database
     const officialletter = await prisma.officialletter.create({
       data: {
-        L_type: 'external',
+        L_type: 'internal',
         L_id: id,
         L_date: L_dateISO,
         L_from: from,
