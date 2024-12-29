@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { faPencil, faDownload, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Cookies from "js-cookie";
 
 export default function SearchableTable() {
   const [data, setData] = useState([]);
@@ -13,6 +14,14 @@ export default function SearchableTable() {
   const [eventIdToDelete, setEventIdToDelete] = useState(null);
   const [showDialog_delete, setShowDialog_delete] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [role, setRole] = useState(null);
+
+
+  useEffect(() => {
+    const storedRole = Cookies.get("role");
+    setRole(storedRole);
+}, []);
+
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
@@ -280,7 +289,8 @@ export default function SearchableTable() {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ padding: "8px", width: "40%", border: "1px solid #ddd", borderRadius: "4px" }}
           />
-
+      {role === "admin" ? (
+        <>
           <button
             type="button"
             onClick={() => window.location.href="/import/internal/add" } // ส่งค่า eventIdToDelete ไปยังฟังก์ชันลบ
@@ -288,6 +298,8 @@ export default function SearchableTable() {
           >
             เพิ่มข้อมูล
           </button>
+          </>
+        ) : null}
         </div>
 
         {/* ตารางข้อมูล */}
@@ -334,20 +346,26 @@ export default function SearchableTable() {
                                       >
                                         <FontAwesomeIcon icon={faDownload} className="text-[#ffffff] transition-colors duration-300 hover:text-[#1E90FF]"  />
                                       </button>
-                                      <button
-                                        type="button"
-                                        onClick={() => handleEdit(row.id)}  // ส่งค่า eventIdToDelete ไปยังฟังก์ชันลบ
-                                        className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
-                                      >
-                                        <FontAwesomeIcon icon={faPencil} className="text-[#ffffff] transition-colors duration-300 "  />
-                                      </button>
-                                      <button
-                                        type="button"
-                                        onClick={() => handleDelete(row.id)}  // ส่งค่า eventIdToDelete ไปยังฟังก์ชันลบ
-                                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                                      >
-                                        <FontAwesomeIcon icon={faTrash} className="text-[#ffffff] transition-colors duration-300 "  />
-                                      </button>
+                                      {role === "admin" ? (
+                                        <>
+                                          <button
+                                            type="button"
+                                            onClick={() => handleEdit(row.id)}
+                                            className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
+                                          >
+                                            <FontAwesomeIcon icon={faPencil} className="text-[#ffffff] transition-colors duration-300" />
+                                          </button>
+                                          <button
+                                            type="button"
+                                            onClick={() => handleDelete(row.id)}
+                                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                                          >
+                                            <FontAwesomeIcon icon={faTrash} className="text-[#ffffff] transition-colors duration-300" />
+                                          </button>
+                                        </>
+                                      ) : null}
+
+
                                     </td>
 
                                 </tr>

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPencil, faTrash, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Cookies from "js-cookie";
+
 
 export default function SearchableTable() {
   const [data, setData] = useState([]);
@@ -13,6 +15,14 @@ export default function SearchableTable() {
   const [eventIdToDelete, setEventIdToDelete] = useState(null);
   const [showDialog_delete, setShowDialog_delete] = useState(false);
   const [showDialog_edit, setShowDialog_edit] = useState(false);
+  const [role, setRole] = useState(null);
+
+
+  useEffect(() => {
+    const storedRole = Cookies.get("role");
+    setRole(storedRole);
+}, []);
+
 
 
   const [formData, setFormData] = useState({
@@ -98,6 +108,7 @@ const filteredData = data.filter((row) => {
 
   return (
     row.id.toString().includes(searchTerm) || // Convert `id` to string
+    formattedDate1.includes(searchTerm) ||
      // Convert date fields to strings if necessary
     row.A_Agency.includes(searchTerm) ||
     row.A_Book_number.includes(searchTerm) ||
@@ -141,35 +152,94 @@ const filteredData = data.filter((row) => {
   };
   
 
+  const Download_file = async (fileName) => {
+    try {
+      const response = await fetch('/api/download', {
+        method: 'POST', // ใช้ POST เพื่อส่งข้อมูล
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fileName }), // ส่งข้อมูลเป็น JSON
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch file');
+      }
+  
+      // แปลง response เป็น Blob
+      const blob = await response.blob();
+  
+      // สร้าง URL เพื่อดาวน์โหลดไฟล์
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName; // ตั้งชื่อไฟล์ที่จะดาวน์โหลด
+      a.click();
+      window.URL.revokeObjectURL(url); // ลบ URL ออกจากหน่วยความจำ
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
+  
 
-  const handleAddNewData = async (e) => {
-    setFormData({
-      A_date1: data.A_date1,
-      A_Agency: data.A_Agency,
-      A_Book_number: data.A_Book_number,
-      A_date2: data.A_date2,
-      A_Subject: data.A_Subject,
-      A_date3: data.A_date3,
-      A_endorser1: data.A_endorser1,
-      A_date4: data.A_date4,
-      A_date5: data.A_date5,
-      A_endorser2: data.A_endorser2
-    });
-    console.log(formData);
-
-    const response = await fetch('/api/announcements', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
+  async function handleFileUpload(e) {
+    if (e.target.files) {
+      const formData = new FormData();
+  
+      // ตรวจสอบและเพิ่มเฉพาะไฟล์ PDF
+      Object.values(e.target.files).forEach((file) => {
+        if (file.type === "application/pdf") {
+          formData.append("file", file);
+        } else {
+          alert(`${file.name} ไม่ใช่ไฟล์ PDF`);
+        }
+      });
+  
     }
   }
+
+  const handleFileAndInputChange = (e) => {
+    handleFileUpload(e);
+    handleInputChange(e);
+  };
+  const handleAddNewData = async (e) => {
+    // ป้องกันการรีเฟรชหน้าเมื่อส่งฟอร์ม
+    e.preventDefault();
+  
+    // สร้าง FormData ใหม่
+    const data = new FormData();
+  
+    // เพิ่มข้อมูลจาก formData ลงใน FormData
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value) {
+        data.append(key, value.toString());
+      }
+    });
+  
+    // เพิ่มไฟล์ PDF ที่อัปโหลด (ถ้ามี)
+    const fileInput = document.querySelector('input[name="file"]');
+    if (fileInput?.files?.[0]) {
+      data.append('file', fileInput.files[0]);
+    }
+    console.log('กำลังส่งข้อมูล:', data);
+  
+    // ส่งคำขอ POST โดยใช้ FormData
+    const response = await fetch('/api/announcements', {
+      method: 'POST',
+      // ไม่ต้องตั้งค่า Content-Type เพราะ FormData จะจัดการให้เอง
+      body: data,
+    });
+  
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Response:', data);
+      window.location.reload(); // รีเฟรชหน้าหลังจากส่งคำขอสำเร็จ
+      // คุณสามารถปรับเปลี่ยนสถานะหรือทำการอื่น ๆ หลังจากคำขอสำเร็จ
+    } else {
+      console.error('Error:', response.statusText);
+    }
+  };
+  
 
 
   const handleDelete2 = async (Id) => {
@@ -250,43 +320,84 @@ const filteredData = data.filter((row) => {
   };
 
   
-  const handleUpdate = async (Id) => {
-    try {
+  // const handleUpdate = async (Id) => {
+  //   try {
 
-      const data = {
-        A_date1: formData1.A_date1,
-        A_Book_number: formData1.A_Book_number,
-        A_date2: formData1.A_date2,
-        A_Subject: formData1.A_Subject,
-        A_date3: formData1.A_date3,
-        A_endorser1: formData1.A_endorser1,
-        A_date4: formData1.A_date4,
-        A_date5: formData1.A_date5,
-        A_endorser2: formData1.A_endorser2,
-        A_Agency: formData1.A_Agency,
-      };
+  //     const data = {
+  //       A_date1: formData1.A_date1,
+  //       A_Book_number: formData1.A_Book_number,
+  //       A_date2: formData1.A_date2,
+  //       A_Subject: formData1.A_Subject,
+  //       A_date3: formData1.A_date3,
+  //       A_endorser1: formData1.A_endorser1,
+  //       A_date4: formData1.A_date4,
+  //       A_date5: formData1.A_date5,
+  //       A_endorser2: formData1.A_endorser2,
+  //       A_Agency: formData1.A_Agency,
+  //     };
 
-      console.log('กำลังอัปเดตข้อมูลติดประกาศ:', data);
+  //     console.log('กำลังอัปเดตข้อมูลติดประกาศ:', data);
     
 
+  //     const response = await fetch(`/api/announcements/edit/${Id}`, {
+  //       method: 'PUT',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify(data),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`เกิดข้อผิดพลาด HTTP! สถานะ: ${response.status}`);
+  //     }
+
+  //     const result = await response.json();
+  //     console.log('อัปเดตกิจกรรมสำเร็จ:', result);
+
+  //     setShowDialog_edit(false);
+  //     window.location.reload(); // รีเฟรชข้อมูล
+  //   } catch (error) {
+  //     console.error('เกิดข้อผิดพลาดในการอัปเดตกิจกรรม:', error);
+  //     alert('เกิดข้อผิดพลาดในการอัปเดตกิจกรรม');
+  //   }
+  // };
+
+
+  const handleUpdate = async (Id) => {
+    const data = new FormData();
+  
+    // เพิ่มข้อมูลฟอร์มเข้าไปใน FormData
+    Object.entries(formData1).forEach(([key, value]) => {
+      if (value) {
+        data.append(key, value.toString());
+      }
+    });
+  
+    // เพิ่มไฟล์ PDF ที่อัปโหลด (ถ้ามี)
+    const fileInput = document.querySelector('input[name="file"]');
+    if (fileInput?.files?.[0]) {
+      data.append('file', fileInput.files[0]);
+    }
+  
+    try {
       const response = await fetch(`/api/announcements/edit/${Id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: data, // ส่ง FormData แทน JSON
       });
-
+  
+      // ตรวจสอบสถานะการตอบกลับ
       if (!response.ok) {
-        throw new Error(`เกิดข้อผิดพลาด HTTP! สถานะ: ${response.status}`);
+        const errorDetails = await response.text(); // อ่านข้อความจาก response
+        throw new Error(`เกิดข้อผิดพลาด HTTP! สถานะ: ${response.status}, ข้อความ: ${errorDetails}`);
       }
-
+  
+      // ตรวจสอบว่าเนื้อหาของการตอบกลับเป็น JSON
       const result = await response.json();
-      console.log('อัปเดตกิจกรรมสำเร็จ:', result);
-
+      console.log('อัปเดตข้อมูลติดประกาศ:', result);
+  
       setShowDialog_edit(false);
-      window.location.reload(); // รีเฟรชข้อมูล
+      // window.location.reload(); // รีเฟรชข้อมูล
     } catch (error) {
-      console.error('เกิดข้อผิดพลาดในการอัปเดตกิจกรรม:', error);
-      alert('เกิดข้อผิดพลาดในการอัปเดตกิจกรรม');
+      // console.error('เกิดข้อผิดพลาดในการอัปเดตหนังสือส่งออกราชการ (ภายใน)', error);
+      // alert(`เกิดข้อผิดพลาดในการอัปเดตหนังสือส่งออกราชการ (ภายใน): ${error.message}`);
     }
   };
 
@@ -302,7 +413,8 @@ const filteredData = data.filter((row) => {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ padding: "8px", width: "40%", border: "1px solid #ddd", borderRadius: "4px" }}
           />
-
+      {role === "admin" ? (
+        <>
           <button
             type="button"
             // onClick={() => window.location.href="/export/external/add" } // ส่งค่า eventIdToDelete ไปยังฟังก์ชันลบ
@@ -310,7 +422,10 @@ const filteredData = data.filter((row) => {
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
           >
             เพิ่มข้อมูล
-          </button>
+          </button>        
+        </>
+      ) : null}
+
         </div>
 
         {/* ตารางข้อมูล */}
@@ -355,6 +470,15 @@ const filteredData = data.filter((row) => {
 
                 <button
                   type="button"
+                  onClick={() => Download_file(row.A_file)}  // ส่งค่า eventIdToDelete ไปยังฟังก์ชันลบ
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  <FontAwesomeIcon icon={faDownload} className="text-[#ffffff] transition-colors duration-300 hover:text-[#1E90FF]"  />
+                </button>
+              {role === "admin" ? (
+                <>
+                <button
+                  type="button"
                   onClick={() => handleEdit(row.id)}  // ส่งค่า eventIdToDelete ไปยังฟังก์ชันลบ
                   className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
                 >
@@ -366,7 +490,10 @@ const filteredData = data.filter((row) => {
                   className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
                 >
                   <FontAwesomeIcon icon={faTrash} className="text-[#ffffff] transition-colors duration-300 "  />
-                </button>
+                </button>                
+                </>
+              ) : null}
+
               </td>
             </tr>
             ))}
@@ -421,7 +548,7 @@ const filteredData = data.filter((row) => {
       </div>
 
 {showDialog_add && (
-  <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
+  <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50 ">
     <div className="bg-white p-6 rounded-md shadow-lg max-w-4xl w-full">
       <h3 className="text-2xl font-bold mb-6">เพิ่มข้อมูลติดประกาศ</h3>
       <form onSubmit={handleAddNewData}>
@@ -563,6 +690,17 @@ const filteredData = data.filter((row) => {
               <option value="ณัฐธยาน์">ณัฐธยาน์</option>
               <option value="ภริดา">ภริดา</option>
             </select>
+          </div>
+          <div >
+            <label className="block text-sm font-medium mb-2" >
+              อัพโหลดเอกสาร:
+            </label>
+            <input
+              type="file"
+              name="file"
+              accept="application/pdf"
+              onChange={handleFileUpload}
+            />
           </div>
         </div>
 
@@ -754,6 +892,19 @@ const filteredData = data.filter((row) => {
                       <option value="ณัฐธยาน์">ณัฐธยาน์</option>
                       <option value="ภริดา">ภริดา</option>
                     </select>
+                  </div>
+                  <div >
+                    <label className="block text-sm font-medium mb-2" >
+                      อัพโหลดเอกสาร:
+                    </label>
+                    <input
+                      type="file"
+                      id="file"
+                      name="file"
+                      accept="application/pdf"
+                      onChange={handleFileAndInputChange}
+                      // className="w-full p-3 border border-gray-300 rounded-md"
+                    />
                   </div>
                 </div>
 

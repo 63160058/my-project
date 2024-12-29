@@ -16,11 +16,12 @@ import Cookies from "js-cookie";
 
 export default function CalendarPage() {
   const [token, setToken] = useState(null);
+  const [role, setRole] = useState(null);
 
   useEffect(() => {
     const storedToken = Cookies.get("token");
-
-
+    const storedRole = Cookies.get("role");
+    setRole(storedRole);
     setToken(storedToken);
 
   }, []);
@@ -251,13 +252,13 @@ export default function CalendarPage() {
         <div className="w-3/12 bg-gray-100 p-5 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-4 text-center flex justify-between items-center">
           รายการกิจกรรม
-          {token && (
+          {token && role === "admin" ? (
             <>
               <button onClick={() => setShowDialog(true)}>
                 <FontAwesomeIcon icon={faCalendarPlus} className="text-[#7096D1] transition-colors duration-300 hover:text-[#1E90FF]"  />
               </button>
             </>
-          )}
+          ): null}
         </h2>
         {showDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50  ">
@@ -488,7 +489,7 @@ export default function CalendarPage() {
                   )}
 
                   {/* ปุ่มไอคอนการแก้ไขและลบ */}
-                  {token && (
+                  {token && role === "admin" ?(
                     <>
                       <div className="absolute top-2 right-2 flex space-x-2">  
                         <button onClick={() => handleEdit(event.event_id)}>
@@ -499,7 +500,7 @@ export default function CalendarPage() {
                         </button>
                       </div>
                     </>
-                  )}
+                  ): null}
                 </li>
               ))
             ) : (

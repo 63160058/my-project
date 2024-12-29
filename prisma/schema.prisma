@@ -85,6 +85,7 @@ model announcements {
   A_date4           DateTime
   A_date5           DateTime
   A_endorser2       String
+  A_file            String?
   created_at   DateTime @default(now()) // Timestamp for when the event is created
   updated_at   DateTime @updatedAt 
 }

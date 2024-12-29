@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { faPencil, faDownload, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Cookies from "js-cookie";
 
 export default function SearchableTable() {
   const [data, setData] = useState([]);
@@ -13,6 +14,13 @@ export default function SearchableTable() {
   const [eventIdToDelete, setEventIdToDelete] = useState(null);
   const [showDialog_delete, setShowDialog_delete] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [role, setRole] = useState(null);
+
+
+  useEffect(() => {
+    const storedRole = Cookies.get("role");
+    setRole(storedRole);
+}, []);
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
@@ -279,14 +287,21 @@ export default function SearchableTable() {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ padding: "8px", width: "40%", border: "1px solid #ddd", borderRadius: "4px" }}
           />
-
+          
+      {role === "admin" ? (
+        <>
           <button
             type="button"
             onClick={() => window.location.href="/export/external/add" } // ส่งค่า eventIdToDelete ไปยังฟังก์ชันลบ
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
           >
             เพิ่มข้อมูล
-          </button>
+          </button>        
+        </>
+      ) : null}
+
+
+
         </div>
 
         {/* ตารางข้อมูล */}
@@ -333,6 +348,10 @@ export default function SearchableTable() {
                                       >
                                         <FontAwesomeIcon icon={faDownload} className="text-[#ffffff] transition-colors duration-300 hover:text-[#1E90FF]"  />
                                       </button>
+
+
+                                    {role === "admin" ? (
+                                      <>
                                       <button
                                         type="button"
                                         onClick={() => handleEdit(row.id)}  // ส่งค่า eventIdToDelete ไปยังฟังก์ชันลบ
@@ -346,7 +365,10 @@ export default function SearchableTable() {
                                         className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
                                       >
                                         <FontAwesomeIcon icon={faTrash} className="text-[#ffffff] transition-colors duration-300 "  />
-                                      </button>
+                                      </button>                                      
+                                      </>
+                                    ) : null}
+
                                     </td>
 
                                 </tr>

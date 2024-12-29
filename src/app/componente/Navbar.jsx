@@ -14,14 +14,17 @@ function Navbar() {
     // เก็บค่า token และ username จากคุกกี้
     const [token, setToken] = useState(null);
     const [username, setUsername] = useState(null);
+    const [role, setRole] = useState(null);
     const [isLoading, setIsLoading] = useState(true); // สถานะโหลด
 
     useEffect(() => {
         const storedToken = Cookies.get("token");
         const storedUsername = Cookies.get("userName");
+        const storedRole = Cookies.get("role");
 
         setToken(storedToken);
         setUsername(storedUsername);
+        setRole(storedRole);
         setIsLoading(false); // อัพเดตว่าโหลดเสร็จแล้ว
     }, []);
 
@@ -153,7 +156,8 @@ function Navbar() {
                         {token ? (
                             <>
                                 <li className="mx-3 flex items-center">
-                                    <span>สวัสดี, {username}</span>
+                                    <span>{username}</span>
+
                                 </li>
                                 <li className="mx-3">
                                     <button
@@ -165,7 +169,6 @@ function Navbar() {
                                 </li>
                             </>
                         ) : (
-                            
                             <li className="mx-3 flex space-x-4">
                             <Link href="/register">
                                 <button className="bg-green-500 text-white border py-2 px-4 rounded-md text-ls my-2 cursor-pointer hover:bg-green-600 transition-colors">
@@ -178,7 +181,6 @@ function Navbar() {
                                 </button>
                             </Link>
                         </li>
-                        
                         )}
                     </ul>
                 </div>
